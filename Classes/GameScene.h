@@ -2,6 +2,7 @@
 #define __GAME_SCENE_H__
 
 #include "cocos2d.h"
+#include "MenuScene.h"
 #include "GamePlayer.h"
 #include "GameMissile.h"
 #include "GameItem.h"
@@ -18,10 +19,12 @@ USING_NS_CC;
 class GameScene : public cocos2d::Layer
 {
 private:
-	GamePlayer			Player;			// 플레이어 비행기	
-	GameMissile			Missile;		// 미사일
-	GameItem			Item;			// 아이템
-	GameEnemy			Enemy;			// 적 비행기
+	GamePlayer			Player;					// 플레이어 비행기	
+	GameMissile			PlayerMissile;			// 플레이어 미사일
+	GameMissile			EnemyMissile;			// 적비행기 미사일
+	GameItem			Item;					// 아이템
+	GameEnemy			Enemy;					// 적비행기
+	cocos2d::Layer*		layerScene;				// 게임화면 레이어값
 
 
 public:

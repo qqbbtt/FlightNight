@@ -43,10 +43,10 @@ void GameMissile::menuCloseCallback(Ref* pSender)
 }
 
 /*------------------------------------------------------------------------------------
-| 함 수 명  : setMissile(float delta)
-| 매개변수  : delta = 초
+| 함 수 명  : setMissile(float delta, bool item)
+| 매개변수  : delta = 초, item = 아이템 습득
 | 리 턴 값  :
-| 설    명  : 움직이는 미사일 셋팅
+| 설    명  : 움직이는 미사일 셋팅 (플레이어 미사일)
 |------------------------------------------------------------------------------------*/
 void GameMissile::setMissile(float delta, bool item)
 {
@@ -54,11 +54,9 @@ void GameMissile::setMissile(float delta, bool item)
 	auto sprPlayer = (Sprite*)layerScene->getChildByTag(TAG_SPRITE_PLAYER);
 
 	// 미사일 스프라이트 생성
-//	auto sprMissile = Sprite::create("game/missile.png");
-
 	Sprite *sprMissile;
 
-	if (item) 
+	if (item)  // 미사일이 있다면
 	{
 		sprMissile = Sprite::create("game/missile_pow.png");
 		sprMissile->setTag(5);
@@ -68,7 +66,6 @@ void GameMissile::setMissile(float delta, bool item)
 		sprMissile = Sprite::create("game/missile.png");
 		sprMissile->setTag(1);
 	}
-
 
 	// 비행기의 위치를 고려해서 스프라이트 위치 지정
 	sprMissile->setPosition(sprPlayer->getPosition() + Point(-1, 20));
@@ -83,12 +80,36 @@ void GameMissile::setMissile(float delta, bool item)
 	sprMissile->runAction(action);
 }
 
+/*------------------------------------------------------------------------------------
+| 함 수 명  : setMissile(float delta, Vector<Sprite*> enemy)
+| 매개변수  : delta = 초, enemy = 적 비행기
+| 리 턴 값  :
+| 설    명  : 움직이는 미사일 셋팅 (적비행기 미사일)
+|------------------------------------------------------------------------------------*/
+void GameMissile::setMissile(float delta, Vector<Sprite*> enemy)
+{
+	// 적 비행기만큼 미사일 생성
+	for (Sprite* sprEnemy : enemy)
+	{
+		auto sprMissile = Sprite::create("game/missile.png");
+
+		sprMissile->setPosition(sprEnemy->getPosition() + Point(1, 20));
+		layerScene->addChild(sprMissile, 1);
+		Missiles.pushBack(sprMissile);
+
+		// 발사되는 미사일 액션 활성화
+		auto action = Sequence::create(MoveBy::create(fSpeed, Point(0, -Director::getInstance()->getWinSize().height)),
+			CallFuncN::create(CC_CALLBACK_1(GameMissile::resetMissile, this)), NULL);
+		sprMissile->runAction(action);
+	}
+
+}
 
 /*------------------------------------------------------------------------------------
 | 함 수 명  : resetMissile(Ref *sender)
 | 매개변수  : sender = 화면 밖으로 나간 스프라이트
 | 리 턴 값  :
-| 설    명  : 미사일이 화면 밖으로 이동하면 스프라이트 해제
+| 설    명  : 스프라이트 해제
 |------------------------------------------------------------------------------------*/
 void GameMissile::resetMissile(Ref *sender)
 {
@@ -98,10 +119,10 @@ void GameMissile::resetMissile(Ref *sender)
 }
 
 /*------------------------------------------------------------------------------------
-| 함 수 명  : initMissile(cocos2d::Layer* lay, int tag)
-| 매개변수  : lay = 게임화면 레이어, tag = 플레이어 테그
+| 함 수 명  : initMissile(cocos2d::Layer* lay)
+| 매개변수  : lay = 게임화면 레이어값
 | 리 턴 값  :
-| 설    명  : 게임화면 레이어값과 플레이어 테그 값 셋팅
+| 설    명  : 게임화면 레이어값 및 초기화
 |------------------------------------------------------------------------------------*/
 void GameMissile::initMissile(cocos2d::Layer* lay)
 {
@@ -146,4 +167,15 @@ void GameMissile::updateMissile(bool item)
 		layerScene->scheduleOnce(schedule_selector(GameItem::resetisItem), 5.0);
 
 	}*/
+}
+
+/*------------------------------------------------------------------------------------
+| 함 수 명  : getSprMissiles()
+| 매개변수  :
+| 리 턴 값  : Vector<Sprite*> = 미사일 vecor
+| 설    명  : 미사일 vecotr 리턴
+|------------------------------------------------------------------------------------*/
+Vector<Sprite*>	GameMissile::getSprMissiles()
+{
+	return Missiles;
 }

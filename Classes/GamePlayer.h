@@ -13,7 +13,9 @@ USING_NS_CC;
 class GamePlayer : public cocos2d::Layer
 {
 private:
-	cocos2d::Layer*			layerScene;			// 레이어값
+	cocos2d::EventListenerTouchOneByOne* listener;
+	
+	cocos2d::Layer*			layerScene;			// 게임화면 레이어값
 	Point posStartTouch,	posStartPlayer;		// 비행기 터치 및 이동값
 
 public:
@@ -31,7 +33,7 @@ public:
 	void initPlayer(cocos2d::Layer* lay);					// 플레이어 비행기 초기화
 	bool onTouchBegan(Touch *touch, Event *unused_event);	// 플레이어 비행기 터치
 	void onTouchMoved(Touch *touch, Event *unused_event);	// 플레이어 비행기 터치 하면서 이동
-
+	void ChangeScene();
 };
 
 //extern GamePlayer Player;

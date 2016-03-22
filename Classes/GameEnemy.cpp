@@ -85,7 +85,7 @@ void GameEnemy::setEnemy(float delta)
 | 함 수 명  : resetEnemy(Ref *sender)
 | 매개변수  : sender = 화면 밖으로 나간 스프라이트
 | 리 턴 값  :
-| 설    명  : 아이템이 화면 밖으로 이동하면 스프라이트 해제
+| 설    명  : 스프라이트 해제
 |------------------------------------------------------------------------------------*/
 void GameEnemy::resetEnemy(Ref *sender)
 {
@@ -104,10 +104,8 @@ void GameEnemy::resetEnemy(Ref *sender)
 void GameEnemy::initEnemy(cocos2d::Layer* lay)
 {
 	layerScene = lay;
-	padding = 10;
 	fSpeed = 3.0;
 	Enemies.clear();
-//	isItem = false;
 }
 
 /*void GameEnemy::updateEnemy()
@@ -145,3 +143,14 @@ bool GameEnemy::getisItem()
 	return isItem;
 }
 */
+
+/*------------------------------------------------------------------------------------
+| 함 수 명  : getSprEnemies()
+| 매개변수  : 
+| 리 턴 값  : Vector<Sprite*> = 적비행기 vecor
+| 설    명  : 적비행기 vecotr 리턴
+|------------------------------------------------------------------------------------*/
+Vector<Sprite*>	GameEnemy::getSprEnemies()
+{
+	return Enemies;
+}

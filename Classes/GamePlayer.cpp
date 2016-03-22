@@ -43,8 +43,8 @@ void GamePlayer::menuCloseCallback(Ref* pSender)
 }
 
 /*------------------------------------------------------------------------------------
-| 함 수 명  : initPlayer(void)
-| 매개변수  :
+| 함 수 명  : initPlayer(cocos2d::Layer* lay)
+| 매개변수  : lay = 게임화면 레이어값
 | 리 턴 값  :
 | 설    명  : 플레이어 비행기 초기화
 |------------------------------------------------------------------------------------*/
@@ -53,6 +53,7 @@ void GamePlayer::initPlayer(cocos2d::Layer* lay)
 	// 레이어값 저장
 	layerScene = lay;
 
+	// 플레이어 비행기 생성
 	auto spr = Sprite::create();
 	spr->setPosition(Point(Director::getInstance()->getWinSize().width / 2, Director::getInstance()->getWinSize().height / 2));
 	spr->setTag(TAG_SPRITE_PLAYER);
@@ -60,6 +61,7 @@ void GamePlayer::initPlayer(cocos2d::Layer* lay)
 
 	auto texture = Director::getInstance()->getTextureCache()->addImage("game/Spaceship.png");
 
+	// 애니메이션 생성
 	auto animation = Animation::create();
 	animation->setDelayPerUnit(0.1f);
 	for (int i = 0; i<4; i++) {
@@ -71,7 +73,8 @@ void GamePlayer::initPlayer(cocos2d::Layer* lay)
 	spr->runAction(RepeatForever::create(animate));
 
 	// 비행기 터치 및 이동 이벤트
-	auto listener = EventListenerTouchOneByOne::create();
+	listener = EventListenerTouchOneByOne::create();
+	listener->setEnabled(true);
 	listener->onTouchBegan = CC_CALLBACK_2(GamePlayer::onTouchBegan, this);
 	listener->onTouchMoved = CC_CALLBACK_2(GamePlayer::onTouchMoved, this);
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1);
@@ -139,4 +142,9 @@ void GamePlayer::onTouchMoved(Touch *touch, Event *unused_event)
 	auto sprPlayer = (Sprite*)layerScene->getChildByTag(TAG_SPRITE_PLAYER);
 	sprPlayer->setPosition(pos);
 
+}
+
+void GamePlayer::ChangeScene()
+{
+	listener->setEnabled(false);
 }

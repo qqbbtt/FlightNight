@@ -40,12 +40,17 @@ bool GameScene::init()
 	auto layer = Layer::create();
 	this->addChild(layer);
 
+	layerScene = layer;
+
 	// 초기화
 	Player.initPlayer(layer);
-	Missile.initMissile(layer);
-	Item.initItem(layer);
-	Enemy.initEnemy(layer);
+	PlayerMissile.initMissile(layer);
 
+	Enemy.initEnemy(layer);
+	EnemyMissile.initMissile(layer);
+
+	Item.initItem(layer);
+	
 
 	// 매번 호출 할 함수 지정
 	this->schedule(schedule_selector(GameScene::scheduleMissile), 0.1);				
@@ -66,7 +71,8 @@ bool GameScene::init()
 void GameScene::scheduleMissile(float delta)
 {
 	// 미사일 발사
-	Missile.setMissile(delta, Item.getisItem());
+	PlayerMissile.setMissile(delta, Item.getisItem());
+	EnemyMissile.setMissile(delta, Enemy.getSprEnemies());
 }
 
 /*------------------------------------------------------------------------------------
@@ -91,6 +97,7 @@ void GameScene::scheduleEnemy(float delta)
 {
 	// 아이템 생성 및 이동
 	Enemy.setEnemy(delta);
+	
 }
 
 void GameScene::menuCloseCallback(Ref* pSender)
@@ -141,12 +148,61 @@ void GameScene::initBackGround()
 
 void GameScene::update(float delta)
 {
-	Item.updateItem();
-//	Missile.updateMissile(Item.getisItem());
-//	Missile.setMissile(delta, Item.getisItem());
+	auto sprPlayer = (Sprite*)layerScene->getChildByTag(TAG_SPRITE_PLAYER);
+	Rect rectPlayer = sprPlayer->getBoundingBox();
 
-	if (Item.getisItem())
-		this->scheduleOnce(schedule_selector(GameScene::resetisItem), 5.0);
+	Rect rect1, rect2;
+
+	// 플레이어와 아이템 충돌 체크
+	for (Sprite* sprItem : Item.getSprItems())
+	{
+		rect1 = sprItem->getBoundingBox();
+
+		if (rectPlayer.intersectsRect(rect1))
+		{
+			Item.updateItem(sprItem);
+			this->scheduleOnce(schedule_selector(GameScene::resetisItem), 5.0);
+			break;
+		}		
+	}
+
+	// 플레이어 미사일과 적비행기 충돌 체크
+	for (Sprite* missile : PlayerMissile.getSprMissiles()) 
+	{
+		rect1 = missile->getBoundingBox();
+
+		for (Sprite* sprEnemy : Enemy.getSprEnemies() )
+		{
+			 rect2 = sprEnemy->getBoundingBox();
+
+			 if (rect2.intersectsRect(rect1))
+			{
+				 PlayerMissile.resetMissile(missile);
+				 Enemy.resetEnemy(sprEnemy);
+				 break;
+			}
+		}
+	}
+
+	// 플레이어와 적미사일 충돌 체크
+	for (Sprite* sprmissile : EnemyMissile.getSprMissiles())
+	{
+		rect1 = sprmissile->getBoundingBox();
+
+		if (rectPlayer.intersectsRect(rect1))
+		{
+			EnemyMissile.resetMissile(sprmissile);
+			Player.ChangeScene();
+			Director::getInstance()->popScene();
+			break;
+		}
+	}
+	
+
+
+
+
+	PlayerMissile.updateMissile(Item.getisItem());
 
 }
 

@@ -23,6 +23,9 @@ namespace ID_MENU
 |------------------------------------------------------------------------------------*/
 class MenuScene : public cocos2d::Layer
 {
+private:
+	cocos2d::Scene* gamese;
+
 public:
     static cocos2d::Scene* createScene();
 

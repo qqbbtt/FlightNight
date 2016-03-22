@@ -72,7 +72,7 @@ void GameItem::setItem(float delta)
 | 함 수 명  : resetItem(Ref *sender)
 | 매개변수  : sender = 화면 밖으로 나간 스프라이트
 | 리 턴 값  :
-| 설    명  : 아이템이 화면 밖으로 이동하면 스프라이트 해제
+| 설    명  : 스프라이트 해제
 |------------------------------------------------------------------------------------*/
 void GameItem::resetItem(Ref *sender)
 {
@@ -96,38 +96,51 @@ void GameItem::initItem(cocos2d::Layer* lay)
 	isItem = false;
 }
 
-void GameItem::updateItem()
+void GameItem::updateItem(Ref *sender)
 {
-	auto sprPlayer = (Sprite*)layerScene->getChildByTag(TAG_SPRITE_PLAYER);
-	Rect rectPlayer = sprPlayer->getBoundingBox();
+	auto sprItem = (Sprite*)sender;
 
-	auto removeSpr = Sprite::create();
-
-	for (Sprite* sprItem : Items) 
+	if (Items.contains(sprItem))
 	{
-
-		Rect rectItem = sprItem->getBoundingBox();
-
-		if (rectPlayer.intersectsRect(rectItem)) 
-			removeSpr = sprItem;	
-	}
-
-	if (Items.contains(removeSpr)) 
-	{
-		resetItem(removeSpr);
+		resetItem(sprItem);
 		isItem = true;
-//		this->scheduleOnce(schedule_selector(GameItem::resetisItem), 5.0);
-
 	}
 }
 
+/*------------------------------------------------------------------------------------
+| 함 수 명  : resetisItem(float delta)
+| 매개변수  : delta = 초
+| 리 턴 값  :
+| 설    명  : 아이템 초기화
+|------------------------------------------------------------------------------------*/
 void GameItem::resetisItem(float delta)
 {
 	isItem = false;
 }
 
+/*------------------------------------------------------------------------------------
+| 함 수 명  : getisItem()
+| 매개변수  : 
+| 리 턴 값  : bool = 습득, 미습득
+| 설    명  : 아이템 습득확인
+|------------------------------------------------------------------------------------*/
 bool GameItem::getisItem()
 {
 	return isItem;
 }
 
+/*------------------------------------------------------------------------------------
+| 함 수 명  : getSprItems()
+| 매개변수  :
+| 리 턴 값  : Vector<Sprite*> = 아이템 vecor
+| 설    명  : 아이템 vecotr 리턴
+|------------------------------------------------------------------------------------*/
+Vector<Sprite*>	GameItem::getSprItems()
+{
+	return Items;
+}
+
+void GameItem::setisItem(bool item)
+{
+	isItem = item;
+}
