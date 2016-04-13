@@ -33,6 +33,8 @@ public:
 	void setEnemy(float delta);					// 움직이는 아이템 셋팅	
 	void resetEnemy(Ref *sender);				// 스프라이트 해제
 	Vector<Sprite*>	getSprEnemies();			// 적비행기 vecotr 리턴
+	void  explosionEnemy(Ref *sender);			// 비행기 폭발
+	void  resetBoom(Ref *sender);				// 폭발 스프라이트 초기화
 
 
 //	void resetisItem(float delta);			// 아이템 습득시

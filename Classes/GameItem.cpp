@@ -96,6 +96,12 @@ void GameItem::initItem(cocos2d::Layer* lay)
 	isItem = false;
 }
 
+/*------------------------------------------------------------------------------------
+| 함 수 명  : updateItem(Ref *sender)
+| 매개변수  : sender = 충돌 한 아이템 스프라이트
+| 리 턴 값  :
+| 설    명  : 충돌 된 아이템 초기화 
+|------------------------------------------------------------------------------------*/
 void GameItem::updateItem(Ref *sender)
 {
 	auto sprItem = (Sprite*)sender;
@@ -140,6 +146,12 @@ Vector<Sprite*>	GameItem::getSprItems()
 	return Items;
 }
 
+/*------------------------------------------------------------------------------------
+| 함 수 명  : setisItem(bool item)
+| 매개변수  : item = 아이템 습득
+| 리 턴 값  : 
+| 설    명  : 아이텝 습득 셋팅
+|------------------------------------------------------------------------------------*/
 void GameItem::setisItem(bool item)
 {
 	isItem = item;

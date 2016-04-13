@@ -5,7 +5,7 @@ USING_NS_CC;
 /*Scene* GamePlayer::createScene()
 {
 	// 'scene' is an autorelease object
-	auto scene = Scene::create();
+	auto scene = Scene::create(); 
 
 	// 'layer' is an autorelease object
 	auto layer = GamePlayer::create();
@@ -144,6 +144,12 @@ void GamePlayer::onTouchMoved(Touch *touch, Event *unused_event)
 
 }
 
+/*------------------------------------------------------------------------------------
+| 함 수 명  : ChangeScene()
+| 매개변수  : 
+| 리 턴 값  :
+| 설    명  : 화면 전환 시 모든 이벤트 입력 중단
+|------------------------------------------------------------------------------------*/
 void GamePlayer::ChangeScene()
 {
 	listener->setEnabled(false);

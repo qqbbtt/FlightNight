@@ -83,7 +83,7 @@ void GameEnemy::setEnemy(float delta)
 
 /*------------------------------------------------------------------------------------
 | 함 수 명  : resetEnemy(Ref *sender)
-| 매개변수  : sender = 화면 밖으로 나간 스프라이트
+| 매개변수  : sender = 삭제 할 스프라이트
 | 리 턴 값  :
 | 설    명  : 스프라이트 해제
 |------------------------------------------------------------------------------------*/
@@ -104,9 +104,46 @@ void GameEnemy::resetEnemy(Ref *sender)
 void GameEnemy::initEnemy(cocos2d::Layer* lay)
 {
 	layerScene = lay;
-	fSpeed = 3.0;
+	fSpeed = 5.0;			// 숫자가 클수록 천천히 움직임.
 	Enemies.clear();
 }
+
+/*------------------------------------------------------------------------------------
+| 함 수 명  : explosionEnemy(Ref *sender)
+| 매개변수  : sender = 충돌한 스프라이트
+| 리 턴 값  :
+| 설    명  : 비행기 폭발
+|------------------------------------------------------------------------------------*/
+void  GameEnemy::explosionEnemy(Ref *sender)
+{
+	auto sprEnemy = (Sprite*)sender;
+
+	auto particle = ParticleSystemQuad::create("game/explosion.plist");
+	particle->setPosition(sprEnemy->getPosition());
+	particle->setScale(0.5);
+	layerScene->addChild(particle);
+
+	auto action = Sequence::create(
+		DelayTime::create(1.0),
+		CallFuncN::create(CC_CALLBACK_1(GameEnemy::resetBoom, this)),
+		NULL);
+	particle->runAction(action);
+}
+
+/*------------------------------------------------------------------------------------
+| 함 수 명  : resetBoom(Ref *sender)
+| 매개변수  : sender = 폭발 스프라이트
+| 리 턴 값  :
+| 설    명  : 폭발 스프라이트 초기화
+|------------------------------------------------------------------------------------*/
+void GameEnemy::resetBoom(Ref *sender)
+{
+	auto particle = (ParticleSystemQuad*)sender;
+
+	layerScene->removeChild(particle);
+}
+
+
 
 /*void GameEnemy::updateEnemy()
 {

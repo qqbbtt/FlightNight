@@ -8,9 +8,11 @@
 #include "GameItem.h"
 #include "GameEnemy.h"
 #include "TagList.h"
+#include "SimpleAudioEngine.h"
 
 
 USING_NS_CC;
+using namespace CocosDenshion;
 
 /*------------------------------------------------------------------------------------
 | CLASS 명  : GameScene
@@ -39,12 +41,13 @@ public:
 	CREATE_FUNC(GameScene);
 
 
-	void initBackGround		();					// 게임 배경화면 초기화
-	void scheduleMissile(float delta);			// 미사일 스케쥴
-	void scheduleItem(float delta);				// 아이템 스케쥴
-	void scheduleEnemy(float delta);				// 적 비행기 스케쥴
-	void update(float delta);					// 업데이트
-	void resetisItem(float delta);
+	void initBackGround		();							// 게임 배경화면 초기화
+	void scheduleEnMissile	(float delta);				// 적비행기 미사일 스케쥴
+	void schedulePlMissile	(float delta);				// 플레이어 미사일 스케쥴
+	void scheduleItem		(float delta);				// 아이템 스케쥴
+	void scheduleEnemy		(float delta);				// 적 비행기 스케쥴
+	void update				(float delta);				// 업데이트
+	void resetisItem		(float delta);				// 아이템 리셋
 
 };
 

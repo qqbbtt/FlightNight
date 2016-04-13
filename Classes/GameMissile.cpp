@@ -78,6 +78,8 @@ void GameMissile::setMissile(float delta, bool item)
 	auto action = Sequence::create(MoveBy::create(fSpeed, Point(0, Director::getInstance()->getWinSize().height)),
 		CallFuncN::create(CC_CALLBACK_1(GameMissile::resetMissile, this)), NULL);
 	sprMissile->runAction(action);
+
+	SimpleAudioEngine::getInstance()->playEffect("game/player_missile.wav");
 }
 
 /*------------------------------------------------------------------------------------
@@ -101,6 +103,8 @@ void GameMissile::setMissile(float delta, Vector<Sprite*> enemy)
 		auto action = Sequence::create(MoveBy::create(fSpeed, Point(0, -Director::getInstance()->getWinSize().height)),
 			CallFuncN::create(CC_CALLBACK_1(GameMissile::resetMissile, this)), NULL);
 		sprMissile->runAction(action);
+
+		SimpleAudioEngine::getInstance()->playEffect("game/enemy_missile.wav");
 	}
 
 }

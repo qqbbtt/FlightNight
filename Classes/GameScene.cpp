@@ -4,7 +4,7 @@
 USING_NS_CC;
 
 Scene* GameScene::createScene()
-{
+{ 
 	// 'scene' is an autorelease object
 	auto scene = Scene::create();
 
@@ -16,6 +16,16 @@ Scene* GameScene::createScene()
 
 	// return the scene
 	return scene;
+}
+
+void GameScene::menuCloseCallback(Ref* pSender)
+{
+	Director::getInstance()->end();
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+	exit(0);
+#endif 
+
 }
 
 /*------------------------------------------------------------------------------------
@@ -50,10 +60,14 @@ bool GameScene::init()
 	EnemyMissile.initMissile(layer);
 
 	Item.initItem(layer);
+
+	// 배경음악 초기화
+	SimpleAudioEngine::getInstance()->playBackgroundMusic("game/bgm.mp3", true);
 	
 
 	// 매번 호출 할 함수 지정
-	this->schedule(schedule_selector(GameScene::scheduleMissile), 0.1);				
+	this->schedule(schedule_selector(GameScene::scheduleEnMissile), 0.5);		
+	this->schedule(schedule_selector(GameScene::schedulePlMissile), 0.1);
 	this->schedule(schedule_selector(GameScene::scheduleItem), 5.0 + rand() % 4);
 	this->schedule(schedule_selector(GameScene::scheduleEnemy), 1.0 + rand() % 2);
 //	this->scheduleOnce(schedule_selector(GameItem::resetisItem), 5.0);
@@ -63,16 +77,27 @@ bool GameScene::init()
 }
 
 /*------------------------------------------------------------------------------------
-| 함 수 명  : scheduleMissile(float delta)
+| 함 수 명  : scheduleEnMissile(float delta)
 | 매개변수  : delta = 초
 | 리 턴 값  :
-| 설    명  : 미사일 스케줄
+| 설    명  : 적비행기 미사일 스케줄
 |------------------------------------------------------------------------------------*/
-void GameScene::scheduleMissile(float delta)
+void GameScene::scheduleEnMissile(float delta)
+{
+	// 미사일 발사
+	EnemyMissile.setMissile(delta, Enemy.getSprEnemies());
+}
+
+/*------------------------------------------------------------------------------------
+| 함 수 명  : schedulePlMissile(float delta)
+| 매개변수  : delta = 초
+| 리 턴 값  :
+| 설    명  : 플레이어 미사일 스케줄
+|------------------------------------------------------------------------------------*/
+void GameScene::schedulePlMissile(float delta)
 {
 	// 미사일 발사
 	PlayerMissile.setMissile(delta, Item.getisItem());
-	EnemyMissile.setMissile(delta, Enemy.getSprEnemies());
 }
 
 /*------------------------------------------------------------------------------------
@@ -98,16 +123,6 @@ void GameScene::scheduleEnemy(float delta)
 	// 아이템 생성 및 이동
 	Enemy.setEnemy(delta);
 	
-}
-
-void GameScene::menuCloseCallback(Ref* pSender)
-{
-	Director::getInstance()->end();
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-	exit(0);
-#endif 
-
 }
 
 /*------------------------------------------------------------------------------------
@@ -146,6 +161,12 @@ void GameScene::initBackGround()
 
 }
 
+/*------------------------------------------------------------------------------------
+| 함 수 명  : update(float delta)
+| 매개변수  : delta = 초
+| 리 턴 값  :
+| 설    명  : update
+|------------------------------------------------------------------------------------*/
 void GameScene::update(float delta)
 {
 	auto sprPlayer = (Sprite*)layerScene->getChildByTag(TAG_SPRITE_PLAYER);
@@ -177,8 +198,10 @@ void GameScene::update(float delta)
 
 			 if (rect2.intersectsRect(rect1))
 			{
+				 Enemy.explosionEnemy(sprEnemy);
 				 PlayerMissile.resetMissile(missile);
 				 Enemy.resetEnemy(sprEnemy);
+				 SimpleAudioEngine::getInstance()->playEffect("game/boom.wav");
 				 break;
 			}
 		}
@@ -192,21 +215,44 @@ void GameScene::update(float delta)
 		if (rectPlayer.intersectsRect(rect1))
 		{
 			EnemyMissile.resetMissile(sprmissile);
-			Player.ChangeScene();
-			Director::getInstance()->popScene();
+		//	Player.ChangeScene();
+		//	Director::getInstance()->popScene();
+			break;
+		}
+	}
+
+	// 플레이어와 적비행기 충돌 체크
+	for (Sprite* sprEnemy : Enemy.getSprEnemies())
+	{
+		rect1 = sprEnemy->getBoundingBox();
+		rect1 = Rect(rect1.origin.x + 30, rect1.origin.y + 30, rect1.size.width - 30, rect1.size.height - 30);
+		rect2 = sprPlayer->getBoundingBox();
+		rect2 = Rect(rect2.origin.x + 30, rect2.origin.y + 30, rect2.size.width - 30, rect2.size.height - 30);
+
+
+		if (rect2.intersectsRect(rect1))
+		{
+			Enemy.explosionEnemy(sprEnemy);
+			Enemy.resetEnemy(sprEnemy);
+		//	Player.ChangeScene();		
+		//	Director::getInstance()->popScene();
 			break;
 		}
 	}
 	
 
 
-
-
-	PlayerMissile.updateMissile(Item.getisItem());
+//	PlayerMissile.updateMissile(Item.getisItem());
 
 }
 
+/*------------------------------------------------------------------------------------
+| 함 수 명  : resetisItem(float delta)
+| 매개변수  : delta = 초
+| 리 턴 값  :
+| 설    명  : 아이템 리셋
+|------------------------------------------------------------------------------------*/
 void GameScene::resetisItem(float delta)
 {
-	Item.resetisItem( delta);
+	Item.resetisItem(delta);
 }

@@ -30,12 +30,11 @@ public:
 //	CREATE_FUNC(GamePlayer);
 
 
-	void initPlayer(cocos2d::Layer* lay);					// 플레이어 비행기 초기화
-	bool onTouchBegan(Touch *touch, Event *unused_event);	// 플레이어 비행기 터치
-	void onTouchMoved(Touch *touch, Event *unused_event);	// 플레이어 비행기 터치 하면서 이동
-	void ChangeScene();
+	void initPlayer		(cocos2d::Layer* lay);					// 플레이어 비행기 초기화
+	bool onTouchBegan	(Touch *touch, Event *unused_event);	// 플레이어 비행기 터치
+	void onTouchMoved	(Touch *touch, Event *unused_event);	// 플레이어 비행기 터치 하면서 이동
+	void ChangeScene	();										// 화면 전환 시 모든 이벤트 입력 중단
 };
 
-//extern GamePlayer Player;
 
 #endif // __GAME_PLAYER_H__
