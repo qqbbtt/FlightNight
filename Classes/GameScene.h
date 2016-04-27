@@ -7,8 +7,10 @@
 #include "GameMissile.h"
 #include "GameItem.h"
 #include "GameEnemy.h"
+#include "GameData.h"
 #include "TagList.h"
 #include "SimpleAudioEngine.h"
+
 
 
 USING_NS_CC;
@@ -26,11 +28,14 @@ private:
 	GameMissile			EnemyMissile;			// 적비행기 미사일
 	GameItem			Item;					// 아이템
 	GameEnemy			Enemy;					// 적비행기
+	GameData			Data;					// 데이터
 	cocos2d::Layer*		layerScene;				// 게임화면 레이어값
+	
 
 
 public:
 	static cocos2d::Scene* createScene();
+
 
 	virtual bool init();				// 게임에 관련한 모든 설정 초기화
 
@@ -42,11 +47,13 @@ public:
 
 
 	void initBackGround		();							// 게임 배경화면 초기화
+	void initLabel			();							// 라벨 초기화
 	void scheduleEnMissile	(float delta);				// 적비행기 미사일 스케쥴
 	void schedulePlMissile	(float delta);				// 플레이어 미사일 스케쥴
 	void scheduleItem		(float delta);				// 아이템 스케쥴
 	void scheduleEnemy		(float delta);				// 적 비행기 스케쥴
 	void update				(float delta);				// 업데이트
+	void updateLabel		();							// 라벨 업데이트
 	void resetisItem		(float delta);				// 아이템 리셋
 
 };

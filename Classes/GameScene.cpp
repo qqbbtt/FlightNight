@@ -4,7 +4,7 @@
 USING_NS_CC;
 
 Scene* GameScene::createScene()
-{ 
+{
 	// 'scene' is an autorelease object
 	auto scene = Scene::create();
 
@@ -49,10 +49,12 @@ bool GameScene::init()
 	// 각종 스프라이트에 쓸 레이어 생성
 	auto layer = Layer::create();
 	this->addChild(layer);
-
 	layerScene = layer;
 
-	// 초기화
+	// 라벨 초기화
+	initLabel();
+
+	// 비행기 초기화
 	Player.initPlayer(layer);
 	PlayerMissile.initMissile(layer);
 
@@ -63,17 +65,47 @@ bool GameScene::init()
 
 	// 배경음악 초기화
 	SimpleAudioEngine::getInstance()->playBackgroundMusic("game/bgm.mp3", true);
-	
+
+	// 데이터 초기화
+	Data.initTime();
 
 	// 매번 호출 할 함수 지정
-	this->schedule(schedule_selector(GameScene::scheduleEnMissile), 0.5);		
-	this->schedule(schedule_selector(GameScene::schedulePlMissile), 0.1);
+	this->schedule(schedule_selector(GameScene::scheduleEnMissile), 0.5f);		
+	this->schedule(schedule_selector(GameScene::schedulePlMissile), 0.1f);
 	this->schedule(schedule_selector(GameScene::scheduleItem), 5.0 + rand() % 4);
 	this->schedule(schedule_selector(GameScene::scheduleEnemy), 1.0 + rand() % 2);
 //	this->scheduleOnce(schedule_selector(GameItem::resetisItem), 5.0);
 	this->scheduleUpdate();
 
 	return true;
+}
+
+/*------------------------------------------------------------------------------------
+| 함 수 명  : initLabel()
+| 매개변수  :
+| 리 턴 값  :
+| 설    명  : 라벨 초기화
+|------------------------------------------------------------------------------------*/
+void GameScene::initLabel()
+{
+	auto labelcurScore = Label::createWithSystemFont("", "Thonburi", 20);
+	auto labelbuffItem = Label::createWithSystemFont("", "Thonburi", 20);
+	auto labeldebuffItem = Label::createWithSystemFont("", "Thonburi", 20);
+
+	labelcurScore->setAnchorPoint(Point(1, 1));
+	labelcurScore->setPosition(Point(Director::getInstance()->getWinSize().width - 10, Director::getInstance()->getWinSize().height - 10));
+	labelcurScore->setTag(TAG_LABEL_SCORE);
+	this->addChild(labelcurScore);
+
+	labelbuffItem->setAnchorPoint(Point(0, 0));
+	labelbuffItem->setPosition(Point(10, 40 ));
+	labelbuffItem->setTag(TAG_LABEL_BUFFITEM);
+	this->addChild(labelbuffItem);
+
+	labeldebuffItem->setAnchorPoint(Point(0, 0));
+	labeldebuffItem->setPosition(Point(10, 10));
+	labeldebuffItem->setTag(TAG_LABEL_DEBUFFITEM);
+	this->addChild(labeldebuffItem);
 }
 
 /*------------------------------------------------------------------------------------
@@ -183,6 +215,7 @@ void GameScene::update(float delta)
 		{
 			Item.updateItem(sprItem);
 			this->scheduleOnce(schedule_selector(GameScene::resetisItem), 5.0);
+			Data.setBuffItem(1);			// 버프아이템 습득시
 			break;
 		}		
 	}
@@ -202,6 +235,7 @@ void GameScene::update(float delta)
 				 PlayerMissile.resetMissile(missile);
 				 Enemy.resetEnemy(sprEnemy);
 				 SimpleAudioEngine::getInstance()->playEffect("game/boom.wav");
+				 Data.setScore(10);
 				 break;
 			}
 		}
@@ -239,11 +273,30 @@ void GameScene::update(float delta)
 			break;
 		}
 	}
-	
+
+	updateLabel();
 
 
 //	PlayerMissile.updateMissile(Item.getisItem());
 
+}
+
+/*------------------------------------------------------------------------------------
+| 함 수 명  : updateLabel()
+| 매개변수  : 
+| 리 턴 값  :
+| 설    명  : 라벨 업데이트
+|------------------------------------------------------------------------------------*/
+void GameScene::updateLabel()
+{
+	auto labelScore = (Label*)this->getChildByTag(TAG_LABEL_SCORE);
+	labelScore->setString(StringUtils::format("SCORE : %d", Data.getScore()));
+
+	auto labelBuffItem = (Label*)this->getChildByTag(TAG_LABEL_BUFFITEM);
+	labelBuffItem->setString(StringUtils::format("BUFFITEM : %d", Data.getBuffItem()));
+
+//	auto labelDeBuffItem = (Label*)this->getChildByTag(TAG_LABEL_DEBUFFITEM);
+//	labelDeBuffItem->setString(StringUtils::format("DEBUFFITEM : %d", Data.getDeBuffItem()));
 }
 
 /*------------------------------------------------------------------------------------

@@ -5,7 +5,7 @@ USING_NS_CC;
 /*Scene* GamePlayer::createScene()
 {
 	// 'scene' is an autorelease object
-	auto scene = Scene::create(); 
+	auto scene = Scene::create();
 
 	// 'layer' is an autorelease object
 	auto layer = GamePlayer::create();
