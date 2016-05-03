@@ -153,4 +153,5 @@ void GamePlayer::onTouchMoved(Touch *touch, Event *unused_event)
 void GamePlayer::ChangeScene()
 {
 	listener->setEnabled(false);
+//	Director::getInstance()->getEventDispatcher()->removeEventListener(listener);
 }

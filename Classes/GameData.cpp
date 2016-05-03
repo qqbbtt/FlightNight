@@ -14,6 +14,7 @@ GameData::GameData()
 	Score = 0;
 	BuffItem = 0;
 	DeBuffItem = 0;
+	Level = 0;
 }
 
 /*------------------------------------------------------------------------------------
@@ -67,6 +68,9 @@ int GameData::getScore()
 void GameData::setScore(int sc)
 {
 	Score += sc;
+
+	if ( Score % 50 == 0 && Score/50 < 9 && Score != 0)
+		Level += 0.1;
 }
 
 /*------------------------------------------------------------------------------------
@@ -100,4 +104,14 @@ int GameData::getBuffItem()
 int GameData::getDeBuffItem()
 {
 	return DeBuffItem;
+}
+
+float GameData::getLevel()
+{
+	return Level;
+}
+
+void GameData::setLevel(float lev)
+{
+	Level += lev;
 }

@@ -16,6 +16,8 @@ private:
 	cocos2d::Layer*		layerScene;			// 게임화면 레이어값
 	float				fSpeed;				// 비행기 떨어지는 속도
 	Vector<Sprite*>		Enemies;			// 비행기 스프라이트 벡터
+	float				SizeW;
+	float				SizeH;
 
 public:
 //	static cocos2d::Scene* createScene();

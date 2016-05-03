@@ -10,6 +10,7 @@
 #include "GameData.h"
 #include "TagList.h"
 #include "SimpleAudioEngine.h"
+#include "GameOverScene.h"
 
 
 
@@ -30,6 +31,8 @@ private:
 	GameEnemy			Enemy;					// 적비행기
 	GameData			Data;					// 데이터
 	cocos2d::Layer*		layerScene;				// 게임화면 레이어값
+	float				SizeW;
+	float				SizeH;
 	
 
 
@@ -55,7 +58,8 @@ public:
 	void update				(float delta);				// 업데이트
 	void updateLabel		();							// 라벨 업데이트
 	void resetisItem		(float delta);				// 아이템 리셋
-
+	void changeScene		();							// 화면 전환
+		
 };
 
 #endif // __GAME_SCENE_H__

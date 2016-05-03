@@ -110,7 +110,8 @@ void MenuScene::menuCallback(Ref *sender)
 		// 게임 플레이
 		case ID_MENU::PLAY:
 		{
-			Director::getInstance()->pushScene(GameScene::createScene());
+			auto scene = TransitionFadeTR::create(1.0, GameScene::createScene());
+			Director::getInstance()->replaceScene(scene);
 			break;
 		}
 

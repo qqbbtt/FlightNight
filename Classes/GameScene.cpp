@@ -43,6 +43,10 @@ bool GameScene::init()
 		return false;
 	}
 
+	// 화면 사이즈
+	SizeW = Director::getInstance()->getWinSize().width;
+	SizeH = Director::getInstance()->getWinSize().height;
+
 	// 배경 초기화
 	initBackGround();
 
@@ -73,7 +77,7 @@ bool GameScene::init()
 	this->schedule(schedule_selector(GameScene::scheduleEnMissile), 0.5f);		
 	this->schedule(schedule_selector(GameScene::schedulePlMissile), 0.1f);
 	this->schedule(schedule_selector(GameScene::scheduleItem), 5.0 + rand() % 4);
-	this->schedule(schedule_selector(GameScene::scheduleEnemy), 1.0 + rand() % 2);
+	this->schedule(schedule_selector(GameScene::scheduleEnemy), 1.0f - Data.getLevel()); 
 //	this->scheduleOnce(schedule_selector(GameItem::resetisItem), 5.0);
 	this->scheduleUpdate();
 
@@ -93,7 +97,7 @@ void GameScene::initLabel()
 	auto labeldebuffItem = Label::createWithSystemFont("", "Thonburi", 20);
 
 	labelcurScore->setAnchorPoint(Point(1, 1));
-	labelcurScore->setPosition(Point(Director::getInstance()->getWinSize().width - 10, Director::getInstance()->getWinSize().height - 10));
+	labelcurScore->setPosition(Point(SizeW - 10, SizeH - 10));
 	labelcurScore->setTag(TAG_LABEL_SCORE);
 	this->addChild(labelcurScore);
 
@@ -165,31 +169,56 @@ void GameScene::scheduleEnemy(float delta)
 |------------------------------------------------------------------------------------*/
 void GameScene::initBackGround()
 {
-	auto bgLayer = Layer::create();
-	this->addChild(bgLayer);
 
-	// 화면 비율에 맞게 스프라이트 생성.
-	auto spr_0 = Sprite::create("game/bg_back.png");
-	spr_0->setAnchorPoint(Point::ZERO);
-	spr_0->setPosition(Point::ZERO);
-	spr_0->setScaleX(Director::getInstance()->getWinSize().width / 1280);
-	spr_0->setScaleY(Director::getInstance()->getWinSize().height / 720);
-	bgLayer->addChild(spr_0);
-
-	// 움직이는 배경을 위해 같은 스프라이트 생성.
-	auto spr_1 = Sprite::create("game/bg_back.png");
-	spr_1->setAnchorPoint(Point::ZERO);
-	spr_1->setPosition(Point(0, Director::getInstance()->getWinSize().height));
-	spr_1->setScaleX(Director::getInstance()->getWinSize().width / 1280);
-	spr_1->setScaleY(Director::getInstance()->getWinSize().height / 720);
-	bgLayer->addChild(spr_1);
-
-	// 액션을 이용해서 배경을 움직임.
-	auto action_0 = MoveBy::create(10.0, Point(0, -(Director::getInstance()->getWinSize().height)));
+	// ParallaxNode 이용. 다중 이미지 배경 스크롤
+	auto node = ParallaxNode::create();
+	this->addChild(node);
+	auto action_0 = MoveBy::create(10.0, Point(0, -720));
 	auto action_1 = Place::create(Point::ZERO);
 	auto action_2 = Sequence::create(action_0, action_1, NULL);
 	auto action_3 = RepeatForever::create(action_2);
-	bgLayer->runAction(action_3);
+	node->runAction(action_3);
+
+
+	// 가장 뒤의 배경. 속도 1배속
+	auto spr_00 = Sprite::create("game/bg_back.png");
+	spr_00->setAnchorPoint(Point::ZERO);
+	spr_00->setScaleX(SizeW / 1280);
+	node->addChild(spr_00, 0, Point(0, 1), Point::ZERO);
+
+	auto spr_01 = Sprite::create("game/bg_back.png");
+	spr_01->setAnchorPoint(Point::ZERO);
+	spr_01->setScaleX(SizeW / 1280);
+	node->addChild(spr_01, 0, Point(0, 1), Point(0, 720));
+
+
+	// 중간 배경, 속도 0.5배속
+	auto spr_10 = Sprite::create("game/bg_middle.png");
+	spr_10->setAnchorPoint(Point::ZERO);
+	spr_10->setScaleX(SizeW / 1280);
+	node->addChild(spr_10, 1, Point(0, 0.5), Point::ZERO);
+
+	auto spr_11 = Sprite::create("game/bg_middle.png");
+	spr_11->setAnchorPoint(Point::ZERO);
+	spr_11->setScaleX(SizeW / 1280);
+	node->addChild(spr_11, 1, Point(0, 0.5), Point(0, 360));
+
+
+	// 바깥 배경. 속도 2배속
+	auto spr_20 = Sprite::create("game/bg_front.png");
+	spr_20->setAnchorPoint(Point::ZERO);
+	spr_20->setScaleX(SizeW / 1280);
+	node->addChild(spr_20, 2, Point(0, 2), Point::ZERO);
+
+	auto spr_21 = Sprite::create("game/bg_front.png");
+	spr_21->setAnchorPoint(Point::ZERO);
+	spr_21->setScaleX(SizeW / 1280);
+	node->addChild(spr_21, 2, Point(0, 2), Point(0, 720));
+
+	auto spr_22 = Sprite::create("game/bg_front.png");
+	spr_22->setAnchorPoint(Point::ZERO);
+	spr_22->setScaleX(SizeW / 1280);
+	node->addChild(spr_22, 2, Point(0, 2), Point(0, 1440));
 
 }
 
@@ -249,8 +278,11 @@ void GameScene::update(float delta)
 		if (rectPlayer.intersectsRect(rect1))
 		{
 			EnemyMissile.resetMissile(sprmissile);
-		//	Player.ChangeScene();
+		//	Player.ChangeScene();					// 플레이어 이벤트 모두 끄기
+		//	auto scene = TransitionTurnOffTiles::create(1.0, GameOverScene::createScene());
+		//	Director::getInstance()->replaceScene(scene);
 		//	Director::getInstance()->popScene();
+			changeScene();
 			break;
 		}
 	}
@@ -308,4 +340,31 @@ void GameScene::updateLabel()
 void GameScene::resetisItem(float delta)
 {
 	Item.resetisItem(delta);
+}
+
+/*------------------------------------------------------------------------------------
+| 함 수 명  : changeScene()
+| 매개변수  : 
+| 리 턴 값  :
+| 설    명  : 화면 전환
+|------------------------------------------------------------------------------------*/
+void GameScene::changeScene()
+{
+/*	this->unschedule(schedule_selector(GameScene::scheduleEnMissile));
+	this->unschedule(schedule_selector(GameScene::schedulePlMissile));
+	this->unschedule(schedule_selector(GameScene::scheduleItem));
+	this->unschedule(schedule_selector(GameScene::scheduleEnemy));
+	//	this->scheduleOnce(schedule_selector(GameItem::resetisItem), 5.0);
+	this->unscheduleUpdate();*/
+
+	this->unscheduleAllSelectors();
+
+	Director::getInstance()->resume();
+	
+
+	Player.ChangeScene();					// 플레이어 이벤트 모두 끄기
+	auto scene = TransitionTurnOffTiles::create(1.0, GameOverScene::createScene());
+	Director::getInstance()->replaceScene(scene);
+	
+	
 }

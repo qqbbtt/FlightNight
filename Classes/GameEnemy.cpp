@@ -51,11 +51,12 @@ void GameEnemy::menuCloseCallback(Ref* pSender)
 void GameEnemy::setEnemy(float delta)
 {
 	// x값 랜덤 생성
-	int x = PADDING_SCREEN + rand() % ((int)Director::getInstance()->getWinSize().width - PADDING_SCREEN * 2);
+	int start_x = PADDING_SCREEN + rand() % ((int)SizeW - PADDING_SCREEN * 2);
+	int end_x = PADDING_SCREEN + rand() % ((int)SizeW - PADDING_SCREEN * 2);
 
 	// 적 비행기 스프라이트 부르기.
 	auto sprEnemy = Sprite::create();
-	sprEnemy->setPosition(Point(x, Director::getInstance()->getWinSize().height));
+	sprEnemy->setPosition(Point(start_x, SizeH));
 	layerScene->addChild(sprEnemy);
 
 	// 적 비행기 백터에 넣기
@@ -75,7 +76,7 @@ void GameEnemy::setEnemy(float delta)
 	sprEnemy->runAction(RepeatForever::create(animate));
 
 	// 아래로 떨어지는 액션 실행
-	auto action = Sequence::create(MoveBy::create(fSpeed, Point(0, -(Director::getInstance()->getWinSize().height))),
+	auto action = Sequence::create(MoveTo::create(fSpeed, Point(end_x, -(SizeH))),
 		CallFuncN::create(CC_CALLBACK_1(GameEnemy::resetEnemy, this)), NULL);
 	sprEnemy->runAction(action);
 
@@ -106,6 +107,8 @@ void GameEnemy::initEnemy(cocos2d::Layer* lay)
 	layerScene = lay;
 	fSpeed = 5.0;			// 숫자가 클수록 천천히 움직임.
 	Enemies.clear();
+	SizeW = Director::getInstance()->getWinSize().width;
+	SizeH = Director::getInstance()->getWinSize().height;
 }
 
 /*------------------------------------------------------------------------------------
