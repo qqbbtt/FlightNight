@@ -302,6 +302,7 @@ void GameScene::update(float delta)
 			Enemy.resetEnemy(sprEnemy);
 		//	Player.ChangeScene();		
 		//	Director::getInstance()->popScene();
+			changeScene();
 			break;
 		}
 	}
