@@ -28,11 +28,18 @@ bool MenuScene::init()
         return false;
     }
     
+	// 메뉴 배경화면 초기화
 	initBackGround();
+
+	// 메뉴 초기화
 	initMenu();
-    
+
+	// DB 생성
+	db.createDatabase();
+
     return true;
 }
+
 
 
 void MenuScene::menuCloseCallback(Ref* pSender)

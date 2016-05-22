@@ -2,6 +2,9 @@
 #define __GAME_SCENE_H__
 
 #include "cocos2d.h"
+#include "SimpleAudioEngine.h"
+#include "sqlite3.h"
+
 #include "MenuScene.h"
 #include "GamePlayer.h"
 #include "GameMissile.h"
@@ -9,7 +12,6 @@
 #include "GameEnemy.h"
 #include "GameData.h"
 #include "TagList.h"
-#include "SimpleAudioEngine.h"
 #include "GameOverScene.h"
 
 
@@ -59,7 +61,7 @@ public:
 	void updateLabel		();							// 라벨 업데이트
 	void resetisItem		(float delta);				// 아이템 리셋
 	void changeScene		();							// 화면 전환
-		
+	void initSound();
 };
 
 #endif // __GAME_SCENE_H__

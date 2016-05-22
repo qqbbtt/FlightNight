@@ -56,9 +56,9 @@ void GameMissile::setMissile(float delta, bool item)
 	// 미사일 스프라이트 생성
 	Sprite *sprMissile;
 
-	if (item)  // 미사일이 있다면
+	if (item)  // 아이템을 먹었다면
 	{
-		sprMissile = Sprite::create("game/missile_pow.png");
+		sprMissile = Sprite::create("game/fire_0.png");
 		sprMissile->setTag(5);
 	}
 	else 

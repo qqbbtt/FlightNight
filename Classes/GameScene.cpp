@@ -50,6 +50,9 @@ bool GameScene::init()
 	// 배경 초기화
 	initBackGround();
 
+	// 배경음악 초기화
+	initSound();
+
 	// 각종 스프라이트에 쓸 레이어 생성
 	auto layer = Layer::create();
 	this->addChild(layer);
@@ -67,9 +70,6 @@ bool GameScene::init()
 
 	Item.initItem(layer);
 
-	// 배경음악 초기화
-	SimpleAudioEngine::getInstance()->playBackgroundMusic("game/bgm.mp3", true);
-
 	// 데이터 초기화
 	Data.initTime();
 
@@ -82,6 +82,19 @@ bool GameScene::init()
 	this->scheduleUpdate();
 
 	return true;
+}
+
+void GameScene::initSound()
+{
+//	if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+//	{
+		SimpleAudioEngine::getInstance()->preloadBackgroundMusic("game/bgm.mp3");
+		SimpleAudioEngine::getInstance()->playBackgroundMusic("game/bgm.mp3", true);
+
+		SimpleAudioEngine::getInstance()->preloadEffect("game/enemy_missile.wav");
+		SimpleAudioEngine::getInstance()->preloadEffect("game/explosion.wav");
+		SimpleAudioEngine::getInstance()->preloadEffect("game/player_missile.wav");
+//	}
 }
 
 /*------------------------------------------------------------------------------------
@@ -367,5 +380,11 @@ void GameScene::changeScene()
 	auto scene = TransitionTurnOffTiles::create(1.0, GameOverScene::createScene());
 	Director::getInstance()->replaceScene(scene);
 	
+
+	SimpleAudioEngine::getInstance()->stopBackgroundMusic(true);
+
+	SimpleAudioEngine::getInstance()->unloadEffect("game/enemy_missile.wav");
+	SimpleAudioEngine::getInstance()->unloadEffect("game/explosion.wav");
+	SimpleAudioEngine::getInstance()->unloadEffect("game/player_missile.wav");
 	
 }
