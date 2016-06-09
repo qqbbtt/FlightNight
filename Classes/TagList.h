@@ -2,6 +2,7 @@
 #define __TAGLIST_H__
 
 #include "cocos2d.h"
+#include "GameData.h"
 
 USING_NS_CC;
 
@@ -13,5 +14,6 @@ USING_NS_CC;
 #define TAG_LABEL_BUFFITEM		51
 #define	TAG_LABEL_DEBUFFITEM	52
 
+//extern GameData Data;
 
 #endif // __TAGLIST_H__

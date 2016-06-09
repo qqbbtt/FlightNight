@@ -1,7 +1,8 @@
 #include "MenuScene.h"
-
+#include "FlightNightDataBase.h"
 
 USING_NS_CC;
+
 
 Scene* MenuScene::createScene()
 {
@@ -35,7 +36,10 @@ bool MenuScene::init()
 	initMenu();
 
 	// DB 생성
-	db.createDatabase();
+	FNDB.createDatabase();
+
+//	SimpleAudioEngine::getInstance()->preloadBackgroundMusic("game/bgm.mp3");
+	SimpleAudioEngine::getInstance()->playBackgroundMusic("menu/Darker_Thoughts.mp3", true);
 
     return true;
 }
@@ -117,6 +121,7 @@ void MenuScene::menuCallback(Ref *sender)
 		// 게임 플레이
 		case ID_MENU::PLAY:
 		{
+			SimpleAudioEngine::getInstance()->playEffect("menu/button.mp3");
 			auto scene = TransitionFadeTR::create(1.0, GameScene::createScene());
 			Director::getInstance()->replaceScene(scene);
 			break;
@@ -124,16 +129,24 @@ void MenuScene::menuCallback(Ref *sender)
 
 		// 도움말
 		case ID_MENU::HELP:
+		{
+			SimpleAudioEngine::getInstance()->playEffect("menu/button.mp3");
 			break;
+		}
+			
 
 		// 옵션
 		case ID_MENU::OPTION:
+		{
+			SimpleAudioEngine::getInstance()->playEffect("menu/button.mp3");
 			break;
+		}
 
 		// 종료
 		case ID_MENU::QUIT:
 		{
-			 Director::getInstance()->end();
+			SimpleAudioEngine::getInstance()->playEffect("menu/button.mp3");
+			Director::getInstance()->end();
 
 			#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 							  exit(0);

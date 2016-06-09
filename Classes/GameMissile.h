@@ -31,15 +31,15 @@ public:
 //	CREATE_FUNC(GamePlayer);
 
 
-	void initMissile	(cocos2d::Layer* lay);					// 게임화면 레이어값과 플레이어 테그 값 셋팅
+	void initMissile(cocos2d::Layer* lay);											// 게임화면 레이어값과 플레이어 테그 값 셋팅
 
-	void setMissile		(float delta, bool item);				// 움직이는 미사일 셋팅 (플레이어 미사일)
-	void setMissile		(float delta, Vector<Sprite*> enemy);	// 움직이는 미사일 셋팅 (적비행기 미사일)
+	void setMissile(float delta, int type);								// 움직이는 미사일 셋팅 (플레이어 미사일)
+	void setMissile(float delta, Vector<Sprite*> enemy, int type);		// 움직이는 미사일 셋팅 (적비행기 미사일)
 
-	void resetMissile	(Ref *sender);							// 스프라이트 해제
-	void updateMissile	(bool item);
+	void resetMissile(Ref *sender);													// 스프라이트 해제
+	void updateMissile(bool item);
 
-	Vector<Sprite*>	getSprMissiles();							// 미사일 vecotr 리턴
+	Vector<Sprite*>	getSprMissiles();												// 미사일 vecotr 리턴
 
 };
 

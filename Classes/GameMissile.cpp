@@ -43,27 +43,28 @@ void GameMissile::menuCloseCallback(Ref* pSender)
 }
 
 /*------------------------------------------------------------------------------------
-| 함 수 명  : setMissile(float delta, bool item)
-| 매개변수  : delta = 초, item = 아이템 습득
+| 함 수 명  : setMissile(float delta, int type)
+| 매개변수  : delta = 초, type = 아이템 종류
 | 리 턴 값  :
 | 설    명  : 움직이는 미사일 셋팅 (플레이어 미사일)
 |------------------------------------------------------------------------------------*/
-void GameMissile::setMissile(float delta, bool item)
+void GameMissile::setMissile(float delta, int type)
 {
 	// 게임화면 레이어에서 플레이어 비행기 정보 가져오기
 	auto sprPlayer = (Sprite*)layerScene->getChildByTag(TAG_SPRITE_PLAYER);
 
 	// 미사일 스프라이트 생성
 	Sprite *sprMissile;
-
-	if (item)  // 아이템을 먹었다면
+	if ( type == 1 )  // 버프 아이템을 먹었다면
 	{
-		sprMissile = Sprite::create("game/fire_0.png");
+		sprMissile = Sprite::create("game/missile2.png");
+		sprMissile->setScale(1.0f);
 		sprMissile->setTag(5);
 	}
 	else 
 	{
-		sprMissile = Sprite::create("game/missile.png");
+		sprMissile = Sprite::create("game/missile1.png");
+		sprMissile->setScale(0.5f);
 		sprMissile->setTag(1);
 	}
 
@@ -79,25 +80,41 @@ void GameMissile::setMissile(float delta, bool item)
 		CallFuncN::create(CC_CALLBACK_1(GameMissile::resetMissile, this)), NULL);
 	sprMissile->runAction(action);
 
-	SimpleAudioEngine::getInstance()->playEffect("game/player_missile.wav");
+	SimpleAudioEngine::getInstance()->playEffect("game/enemy_missile.wav");
 }
 
 /*------------------------------------------------------------------------------------
-| 함 수 명  : setMissile(float delta, Vector<Sprite*> enemy)
-| 매개변수  : delta = 초, enemy = 적 비행기
+| 함 수 명  : setMissile(float delta, Vector<Sprite*> enemy, bool item, bool type)
+| 매개변수  : delta = 초, enemy = 적 비행기, type = 아이템 종류
 | 리 턴 값  :
 | 설    명  : 움직이는 미사일 셋팅 (적비행기 미사일)
 |------------------------------------------------------------------------------------*/
-void GameMissile::setMissile(float delta, Vector<Sprite*> enemy)
+void GameMissile::setMissile(float delta, Vector<Sprite*> enemy, int type)
 {
 	// 적 비행기만큼 미사일 생성
 	for (Sprite* sprEnemy : enemy)
 	{
-		auto sprMissile = Sprite::create("game/missile.png");
+		Sprite* sprMissile;
 
-		sprMissile->setPosition(sprEnemy->getPosition() + Point(1, 20));
-		layerScene->addChild(sprMissile, 1);
-		Missiles.pushBack(sprMissile);
+		if ( type == 2 )
+		{
+			sprMissile = Sprite::create("game/missile4.png");
+
+			sprMissile->setPosition(sprEnemy->getPosition() + Point(1, 20));
+			sprMissile->setScale(2.0f);
+			layerScene->addChild(sprMissile, 1);
+			Missiles.pushBack(sprMissile);
+		}
+		else
+		{
+			sprMissile = Sprite::create("game/missile3.png");
+
+			sprMissile->setPosition(sprEnemy->getPosition() + Point(1, 20));
+			sprMissile->setScale(2.0f);
+			layerScene->addChild(sprMissile, 1);
+			Missiles.pushBack(sprMissile);
+		}
+
 
 		// 발사되는 미사일 액션 활성화
 		auto action = Sequence::create(MoveBy::create(fSpeed, Point(0, -Director::getInstance()->getWinSize().height)),
@@ -105,6 +122,7 @@ void GameMissile::setMissile(float delta, Vector<Sprite*> enemy)
 		sprMissile->runAction(action);
 
 		SimpleAudioEngine::getInstance()->playEffect("game/enemy_missile.wav");
+
 	}
 
 }
@@ -131,7 +149,7 @@ void GameMissile::resetMissile(Ref *sender)
 void GameMissile::initMissile(cocos2d::Layer* lay)
 {
 	layerScene = lay;
-	fSpeed = 1.0;
+	fSpeed = 1.0f;
 	Missiles.clear();
 }
 

@@ -5,10 +5,11 @@
 #include "cocos2d.h"
 
 #include "GameScene.h"
-#include "FNDB.h"
+
 
 USING_NS_CC;
 using namespace std;
+
 
 // ¸Þ´º ID
 namespace ID_MENU
@@ -29,7 +30,7 @@ class MenuScene : public cocos2d::Layer
 {
 private:
 	cocos2d::Scene* gamese;
-	FNDB db;
+
 
 public:
     static cocos2d::Scene* createScene();

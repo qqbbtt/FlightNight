@@ -1,5 +1,6 @@
 #include "GameScene.h"
-
+#include "GameData.h"
+#include "FlightNightDataBase.h"
 
 USING_NS_CC;
 
@@ -47,6 +48,10 @@ bool GameScene::init()
 	SizeW = Director::getInstance()->getWinSize().width;
 	SizeH = Director::getInstance()->getWinSize().height;
 
+	// 미사일 속도
+	speedEn = 0.5f;
+	speedPl = 0.3f;
+
 	// 배경 초기화
 	initBackGround();
 
@@ -71,14 +76,13 @@ bool GameScene::init()
 	Item.initItem(layer);
 
 	// 데이터 초기화
-	Data.initTime();
+	gmData.initTime();
 
-	// 매번 호출 할 함수 지정
-	this->schedule(schedule_selector(GameScene::scheduleEnMissile), 0.5f);		
-	this->schedule(schedule_selector(GameScene::schedulePlMissile), 0.1f);
+	// 매번 호출 할 함수 지정 (속도 조절)
+	this->schedule(schedule_selector(GameScene::scheduleEnMissile), speedEn);		
+	this->schedule(schedule_selector(GameScene::schedulePlMissile), speedPl);
 	this->schedule(schedule_selector(GameScene::scheduleItem), 5.0 + rand() % 4);
-	this->schedule(schedule_selector(GameScene::scheduleEnemy), 1.0f - Data.getLevel()); 
-//	this->scheduleOnce(schedule_selector(GameItem::resetisItem), 5.0);
+	this->schedule(schedule_selector(GameScene::scheduleEnemy), 1.0f);
 	this->scheduleUpdate();
 
 	return true;
@@ -105,9 +109,9 @@ void GameScene::initSound()
 |------------------------------------------------------------------------------------*/
 void GameScene::initLabel()
 {
-	auto labelcurScore = Label::createWithSystemFont("", "Thonburi", 20);
-	auto labelbuffItem = Label::createWithSystemFont("", "Thonburi", 20);
-	auto labeldebuffItem = Label::createWithSystemFont("", "Thonburi", 20);
+	auto labelcurScore = Label::createWithTTF("", "fonts/Marker Felt.ttf", 30);
+	auto labelbuffItem = Label::createWithTTF("", "fonts/Marker Felt.ttf", 20);
+	auto labeldebuffItem = Label::createWithTTF("", "fonts/Marker Felt.ttf", 20);
 
 	labelcurScore->setAnchorPoint(Point(1, 1));
 	labelcurScore->setPosition(Point(SizeW - 10, SizeH - 10));
@@ -134,7 +138,7 @@ void GameScene::initLabel()
 void GameScene::scheduleEnMissile(float delta)
 {
 	// 미사일 발사
-	EnemyMissile.setMissile(delta, Enemy.getSprEnemies());
+	EnemyMissile.setMissile(delta, Enemy.getSprEnemies(), Item.getType());
 }
 
 /*------------------------------------------------------------------------------------
@@ -146,7 +150,7 @@ void GameScene::scheduleEnMissile(float delta)
 void GameScene::schedulePlMissile(float delta)
 {
 	// 미사일 발사
-	PlayerMissile.setMissile(delta, Item.getisItem());
+	PlayerMissile.setMissile(delta, Item.getType());
 }
 
 /*------------------------------------------------------------------------------------
@@ -165,7 +169,7 @@ void GameScene::scheduleItem(float delta)
 | 함 수 명  : scheduleEnemy(float delta)
 | 매개변수  : delta = 초
 | 리 턴 값  :
-| 설    명  : 아이템 스케줄
+| 설    명  : 적비행기 스케줄
 |------------------------------------------------------------------------------------*/
 void GameScene::scheduleEnemy(float delta)
 {
@@ -248,18 +252,43 @@ void GameScene::update(float delta)
 
 	Rect rect1, rect2;
 
-	// 플레이어와 아이템 충돌 체크
-	for (Sprite* sprItem : Item.getSprItems())
+	// 플레이어와 버프 아이템 충돌 체크
+	for (Sprite* sprItem : Item.getBufSprItems())
 	{
 		rect1 = sprItem->getBoundingBox();
 
 		if (rectPlayer.intersectsRect(rect1))
 		{
-			Item.updateItem(sprItem);
-			this->scheduleOnce(schedule_selector(GameScene::resetisItem), 5.0);
-			Data.setBuffItem(1);			// 버프아이템 습득시
+			speedPl = 0.1f;
+			Item.updateBufItem(sprItem);
+			this->unschedule(schedule_selector(GameScene::schedulePlMissile));
+			this->schedule(schedule_selector(GameScene::schedulePlMissile), speedPl);
+			this->scheduleOnce(schedule_selector(GameScene::resetItem), 5.0);
+			gmData.setBufItem(1);			// 버프아이템 습득시
+			SimpleAudioEngine::getInstance()->playEffect("game/item.mp3");
+			
 			break;
 		}		
+	}
+
+	// 플레이어와 디버프 아이템 충돌 체크
+	for (Sprite* sprItem : Item.getDebufSprItems())
+	{
+		rect1 = sprItem->getBoundingBox();
+
+		if (rectPlayer.intersectsRect(rect1))
+		{
+			speedEn = 0.2f;
+			Item.updateDebufItem(sprItem);
+			this->unschedule(schedule_selector(GameScene::scheduleEnMissile));
+			this->schedule(schedule_selector(GameScene::scheduleEnMissile), speedEn);
+			this->scheduleOnce(schedule_selector(GameScene::resetItem), 5.0);
+			gmData.setDebufItem(1);			// 디버프 아이템 습득시
+			SimpleAudioEngine::getInstance()->playEffect("game/item.mp3");
+			
+
+			break;
+		}
 	}
 
 	// 플레이어 미사일과 적비행기 충돌 체크
@@ -277,7 +306,16 @@ void GameScene::update(float delta)
 				 PlayerMissile.resetMissile(missile);
 				 Enemy.resetEnemy(sprEnemy);
 				 SimpleAudioEngine::getInstance()->playEffect("game/boom.wav");
-				 Data.setScore(10);
+				 gmData.setScore(10);
+
+				 if (gmData.getScore() % 50 == 0 && gmData.getScore() != 0 && gmData.getScore() / 50 < 7)
+				 {
+					 float sp = 0.1f * (gmData.getScore() / 50);
+					 CCLOG("gmData.getScore() : %d  |  sp : %f", gmData.getScore(), sp);
+					 this->unschedule(schedule_selector(GameScene::scheduleEnemy));
+					 this->schedule(schedule_selector(GameScene::scheduleEnemy), 1.0f - sp);
+				 }
+
 				 break;
 			}
 		}
@@ -291,10 +329,6 @@ void GameScene::update(float delta)
 		if (rectPlayer.intersectsRect(rect1))
 		{
 			EnemyMissile.resetMissile(sprmissile);
-		//	Player.ChangeScene();					// 플레이어 이벤트 모두 끄기
-		//	auto scene = TransitionTurnOffTiles::create(1.0, GameOverScene::createScene());
-		//	Director::getInstance()->replaceScene(scene);
-		//	Director::getInstance()->popScene();
 			changeScene();
 			break;
 		}
@@ -313,17 +347,12 @@ void GameScene::update(float delta)
 		{
 			Enemy.explosionEnemy(sprEnemy);
 			Enemy.resetEnemy(sprEnemy);
-		//	Player.ChangeScene();		
-		//	Director::getInstance()->popScene();
 			changeScene();
 			break;
 		}
-	}
+	}	
 
 	updateLabel();
-
-
-//	PlayerMissile.updateMissile(Item.getisItem());
 
 }
 
@@ -336,24 +365,37 @@ void GameScene::update(float delta)
 void GameScene::updateLabel()
 {
 	auto labelScore = (Label*)this->getChildByTag(TAG_LABEL_SCORE);
-	labelScore->setString(StringUtils::format("SCORE : %d", Data.getScore()));
+	labelScore->setString(StringUtils::format("SCORE : %d", gmData.getScore()));
 
 	auto labelBuffItem = (Label*)this->getChildByTag(TAG_LABEL_BUFFITEM);
-	labelBuffItem->setString(StringUtils::format("BUFFITEM : %d", Data.getBuffItem()));
+	labelBuffItem->setString(StringUtils::format("BUFFITEM : %d", gmData.getBufItem()));
 
-//	auto labelDeBuffItem = (Label*)this->getChildByTag(TAG_LABEL_DEBUFFITEM);
-//	labelDeBuffItem->setString(StringUtils::format("DEBUFFITEM : %d", Data.getDeBuffItem()));
+	auto labelDeBuffItem = (Label*)this->getChildByTag(TAG_LABEL_DEBUFFITEM);
+	labelDeBuffItem->setString(StringUtils::format("DEBUFFITEM : %d", gmData.getDebufItem()));
 }
 
 /*------------------------------------------------------------------------------------
-| 함 수 명  : resetisItem(float delta)
+| 함 수 명  : resetItem(float delta)
 | 매개변수  : delta = 초
 | 리 턴 값  :
-| 설    명  : 아이템 리셋
+| 설    명  : 버프 아이템 리셋
 |------------------------------------------------------------------------------------*/
-void GameScene::resetisItem(float delta)
+void GameScene::resetItem(float delta)
 {
-	Item.resetisItem(delta);
+
+	speedPl = 0.3f;
+	speedEn = 0.5f;
+	Item.setType(0);
+
+	this->unschedule(schedule_selector(GameScene::schedulePlMissile));
+	this->schedule(schedule_selector(GameScene::schedulePlMissile), speedPl);
+	this->unschedule(schedule_selector(GameScene::scheduleEnMissile));
+	this->schedule(schedule_selector(GameScene::scheduleEnMissile), speedEn);
+}
+
+void GameScene::resetEnemy(float delta)
+{
+
 }
 
 /*------------------------------------------------------------------------------------
@@ -364,24 +406,16 @@ void GameScene::resetisItem(float delta)
 |------------------------------------------------------------------------------------*/
 void GameScene::changeScene()
 {
-/*	this->unschedule(schedule_selector(GameScene::scheduleEnMissile));
-	this->unschedule(schedule_selector(GameScene::schedulePlMissile));
-	this->unschedule(schedule_selector(GameScene::scheduleItem));
-	this->unschedule(schedule_selector(GameScene::scheduleEnemy));
-	//	this->scheduleOnce(schedule_selector(GameItem::resetisItem), 5.0);
-	this->unscheduleUpdate();*/
-
 	this->unscheduleAllSelectors();
 
 	Director::getInstance()->resume();
 	
+	FNDB.insertdData(gmData.getTime().Year, gmData.getTime().Month, gmData.getTime().Day, gmData.getTime().Hour,
+		gmData.getTime().Min, gmData.getScore(), gmData.getBufItem(), gmData.getDebufItem());
 
 	Player.ChangeScene();					// 플레이어 이벤트 모두 끄기
 	auto scene = TransitionTurnOffTiles::create(1.0, GameOverScene::createScene());
-	Director::getInstance()->replaceScene(scene);
-	
-
-	SimpleAudioEngine::getInstance()->stopBackgroundMusic(true);
+	Director::getInstance()->replaceScene(scene);	
 
 	SimpleAudioEngine::getInstance()->unloadEffect("game/enemy_missile.wav");
 	SimpleAudioEngine::getInstance()->unloadEffect("game/explosion.wav");

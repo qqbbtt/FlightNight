@@ -2,7 +2,6 @@
 
 USING_NS_CC;
 
-
 /*------------------------------------------------------------------------------------
 | 함 수 명  : GameData()
 | 매개변수  : 
@@ -12,9 +11,8 @@ USING_NS_CC;
 GameData::GameData()
 {
 	Score = 0;
-	BuffItem = 0;
-	DeBuffItem = 0;
-	Level = 0;
+	BufItem = 0;
+	DebufItem = 0;
 }
 
 /*------------------------------------------------------------------------------------
@@ -68,9 +66,6 @@ int GameData::getScore()
 void GameData::setScore(int sc)
 {
 	Score += sc;
-
-	if ( Score % 50 == 0 && Score/50 < 9 && Score != 0)
-		Level += 0.1;
 }
 
 /*------------------------------------------------------------------------------------
@@ -79,9 +74,20 @@ void GameData::setScore(int sc)
 | 리 턴 값  :
 | 설    명  : 버프 아이템 셋팅
 |------------------------------------------------------------------------------------*/
-void GameData::setBuffItem(int count)
+void GameData::setBufItem(int count)
 {
-	BuffItem += count;
+	BufItem += count;
+}
+
+/*------------------------------------------------------------------------------------
+| 함 수 명  : setDebufItem(int count)
+| 매개변수  : count = 아이템 추가
+| 리 턴 값  :
+| 설    명  : 버프 아이템 셋팅
+|------------------------------------------------------------------------------------*/
+void GameData::setDebufItem(int count)
+{
+	DebufItem += count;
 }
 
 /*------------------------------------------------------------------------------------
@@ -90,9 +96,9 @@ void GameData::setBuffItem(int count)
 | 리 턴 값  : int = 버프 아이템 갯수
 | 설    명  : 버프 아이템 리턴
 |------------------------------------------------------------------------------------*/
-int GameData::getBuffItem()
+int GameData::getBufItem()
 {
-	return BuffItem;
+	return BufItem;
 }
 
 /*------------------------------------------------------------------------------------
@@ -101,17 +107,7 @@ int GameData::getBuffItem()
 | 리 턴 값  : int = 디버프 아이템 갯수
 | 설    명  : 디버프 아이템 리턴
 |------------------------------------------------------------------------------------*/
-int GameData::getDeBuffItem()
+int GameData::getDebufItem()
 {
-	return DeBuffItem;
-}
-
-float GameData::getLevel()
-{
-	return Level;
-}
-
-void GameData::setLevel(float lev)
-{
-	Level += lev;
+	return DebufItem;
 }

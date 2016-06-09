@@ -53,13 +53,31 @@ void GameItem::setItem(float delta)
 	// x값 랜덤 생성
 	int x = PADDING_SCREEN + rand() % ((int)Director::getInstance()->getWinSize().width - PADDING_SCREEN * 2);
 
-	// 아이템 스프라이트 불르기.
-	auto sprItem = Sprite::create("game/item.png");
-	sprItem->setPosition(Point(x, Director::getInstance()->getWinSize().height));
-	layerScene->addChild(sprItem);
+	Sprite* sprItem;
+	
+	// 아이템 스프라이트 생성
+	if (rand() % 2 == 1)
+	{
+		sprItem = Sprite::create("game/buffitem.png");
+		sprItem->setPosition(Point(x, Director::getInstance()->getWinSize().height));
+		sprItem->setScale(1.5f);
+		layerScene->addChild(sprItem);
 
-	// 생성한 아이템 백터에 넣기
-	Items.pushBack(sprItem);
+		// 생성한 아이템 백터에 넣기
+		BufItems.pushBack(sprItem);
+	}
+
+	else
+	{
+		sprItem = Sprite::create("game/debuffitem.png");
+		sprItem->setPosition(Point(x, Director::getInstance()->getWinSize().height));
+		sprItem->setScale(0.08f);
+		layerScene->addChild(sprItem);
+
+		// 생성한 아이템 백터에 넣기
+		DebufItems.pushBack(sprItem);
+	}
+
 
 	// 아래로 떨어지는 액션 실행
 	auto action = Sequence::create(MoveBy::create(fSpeed, Point(0, -(Director::getInstance()->getWinSize().height))),
@@ -77,7 +95,16 @@ void GameItem::setItem(float delta)
 void GameItem::resetItem(Ref *sender)
 {
 	auto sprItem = (Sprite*)sender;
-	Items.eraseObject(sprItem);
+
+	if (BufItems.contains(sprItem))
+	{
+		BufItems.eraseObject(sprItem);
+	}
+	else
+	{
+		DebufItems.eraseObject(sprItem);
+	}
+		
 	layerScene->removeChild(sprItem);
 
 }
@@ -92,67 +119,85 @@ void GameItem::initItem(cocos2d::Layer* lay)
 {
 	layerScene = lay;
 	fSpeed = 3.0;
-	Items.clear();
-	isItem = false;
+	BufItems.clear();
+	DebufItems.clear();
+	Type = 0;
 }
 
 /*------------------------------------------------------------------------------------
-| 함 수 명  : updateItem(Ref *sender)
+| 함 수 명  : updatBbufItem(Ref *sender)
 | 매개변수  : sender = 충돌 한 아이템 스프라이트
 | 리 턴 값  :
-| 설    명  : 충돌 된 아이템 초기화 
+| 설    명  : 충돌 된 버프 아이템 초기화 
 |------------------------------------------------------------------------------------*/
-void GameItem::updateItem(Ref *sender)
+void GameItem::updateBufItem(Ref *sender)
 {
 	auto sprItem = (Sprite*)sender;
 
-	if (Items.contains(sprItem))
+	if (BufItems.contains(sprItem))
 	{
 		resetItem(sprItem);
-		isItem = true;
+		Type = 1;
 	}
 }
 
 /*------------------------------------------------------------------------------------
-| 함 수 명  : resetisItem(float delta)
-| 매개변수  : delta = 초
+| 함 수 명  : updateDebufItem(Ref *sender)
+| 매개변수  : sender = 충돌 한 아이템 스프라이트
 | 리 턴 값  :
-| 설    명  : 아이템 초기화
+| 설    명  : 충돌 된 디버프 아이템 초기화
 |------------------------------------------------------------------------------------*/
-void GameItem::resetisItem(float delta)
+void GameItem::updateDebufItem(Ref *sender)
 {
-	isItem = false;
+	auto sprItem = (Sprite*)sender;
+
+	if (DebufItems.contains(sprItem))
+	{
+		resetItem(sprItem);
+		Type = 2;
+	}
 }
 
 /*------------------------------------------------------------------------------------
-| 함 수 명  : getisItem()
-| 매개변수  : 
-| 리 턴 값  : bool = 습득, 미습득
-| 설    명  : 아이템 습득확인
-|------------------------------------------------------------------------------------*/
-bool GameItem::getisItem()
-{
-	return isItem;
-}
-
-/*------------------------------------------------------------------------------------
-| 함 수 명  : getSprItems()
+| 함 수 명  : getBufSprItems()
 | 매개변수  :
 | 리 턴 값  : Vector<Sprite*> = 아이템 vecor
-| 설    명  : 아이템 vecotr 리턴
+| 설    명  : 버프 아이템 vecotr 리턴
 |------------------------------------------------------------------------------------*/
-Vector<Sprite*>	GameItem::getSprItems()
+Vector<Sprite*>	GameItem::getBufSprItems()
 {
-	return Items;
+	return BufItems;
 }
 
 /*------------------------------------------------------------------------------------
-| 함 수 명  : setisItem(bool item)
-| 매개변수  : item = 아이템 습득
-| 리 턴 값  : 
-| 설    명  : 아이텝 습득 셋팅
+| 함 수 명  : getDebufSprItems()
+| 매개변수  :
+| 리 턴 값  : Vector<Sprite*> = 아이템 vecor
+| 설    명  : 디아이템 vecotr 리턴
 |------------------------------------------------------------------------------------*/
-void GameItem::setisItem(bool item)
+Vector<Sprite*>	GameItem::getDebufSprItems()
 {
-	isItem = item;
+	return DebufItems;
+}
+
+/*------------------------------------------------------------------------------------
+| 함 수 명  : setType(int ty)
+| 매개변수  : ty = 아이템 종류
+| 리 턴 값  : 
+| 설    명  : 아이템 종류 셋팅
+|------------------------------------------------------------------------------------*/
+void GameItem::setType(int ty)
+{
+	Type = ty;
+}
+
+/*------------------------------------------------------------------------------------
+| 함 수 명  : getType()
+| 매개변수  : 
+| 리 턴 값  : int = 아이템 종류 ( 0 = 아이템 미습득, 1 = 버프 아이템, 2 = 디버프 아이템 )
+| 설    명  : 아이템 종류 리턴
+|------------------------------------------------------------------------------------*/
+int GameItem::getType()
+{
+	return Type;
 }

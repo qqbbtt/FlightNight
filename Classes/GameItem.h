@@ -13,10 +13,11 @@ USING_NS_CC;
 class GameItem : public cocos2d::Layer
 {
 private:
-	cocos2d::Layer*		layerScene;		// 게임화면 레이어값
-	float				fSpeed;			// 아이템 떨어지는 속도
-	Vector<Sprite*>		Items;			// 아이템 스프라이트 voctor
-	bool				isItem;			// 아이템을 습득 시 true.
+	cocos2d::Layer*		layerScene;			// 게임화면 레이어값
+	float				fSpeed;				// 아이템 떨어지는 속도
+	Vector<Sprite*>		BufItems;			// 버프 아이템 스프라이트 vector
+	Vector<Sprite*>		DebufItems;			// 디버프 아이템 스프라이트 vector
+	int					Type;				// 아이템 종류
 
 public:
 //	static cocos2d::Scene* createScene();
@@ -30,15 +31,16 @@ public:
 //	CREATE_FUNC(GamePlayer);
 
 
-	void initItem		(cocos2d::Layer* lay);		// 게임화면 레이어값과 아이템 초기화
-	void setItem		(float delta);				// 움직이는 아이템 셋팅	
-	void resetItem		(Ref *sender);				// 스프라이트 해제
-	void resetisItem	(float delta);				// 아이템 초기화
-	void updateItem		(Ref *sender);				// 충돌 된 아이템 초기화 
-	bool getisItem		();							// 아이템 습득확인
-	void setisItem		(bool item);				// 아이텝 습득 셋팅
+	void initItem (cocos2d::Layer* lay);		// 게임화면 레이어값과 아이템 초기화
+	void setItem (float delta);					// 움직이는 아이템 셋팅	
+	void resetItem (Ref *sender);				// 스프라이트 해제
+	void updateBufItem (Ref *sender);			// 충돌 된 버프 아이템 초기화 
+	void updateDebufItem (Ref *sender);			// 충돌 된 디버프 아이템 초기화 
+	int getType ();								// 아이템 종류 리턴
+	void setType (int ty);						// 아이템 종류 셋팅
 
-	Vector<Sprite*>	getSprItems();					// 아이템 vecotr 리턴
+	Vector<Sprite*>	getBufSprItems();					// 버프 아이템 vecotr 리턴
+	Vector<Sprite*>	getDebufSprItems();					// 디버프 아이템 vecotr 리턴
 
 };
 

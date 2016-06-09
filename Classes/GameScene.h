@@ -15,9 +15,9 @@
 #include "GameOverScene.h"
 
 
-
 USING_NS_CC;
 using namespace CocosDenshion;
+
 
 /*------------------------------------------------------------------------------------
 | CLASS 명  : GameScene
@@ -31,10 +31,12 @@ private:
 	GameMissile			EnemyMissile;			// 적비행기 미사일
 	GameItem			Item;					// 아이템
 	GameEnemy			Enemy;					// 적비행기
-	GameData			Data;					// 데이터
+	GameData			gmData;
 	cocos2d::Layer*		layerScene;				// 게임화면 레이어값
-	float				SizeW;
-	float				SizeH;
+	float				SizeW;					// 화면 가로
+	float				SizeH;					// 화면 세로
+	float				speedPl;				// 플레이어 미사일 속도
+	float				speedEn;				// 적비행기 미사일 속도
 	
 
 
@@ -51,17 +53,18 @@ public:
 	CREATE_FUNC(GameScene);
 
 
-	void initBackGround		();							// 게임 배경화면 초기화
-	void initLabel			();							// 라벨 초기화
-	void scheduleEnMissile	(float delta);				// 적비행기 미사일 스케쥴
-	void schedulePlMissile	(float delta);				// 플레이어 미사일 스케쥴
-	void scheduleItem		(float delta);				// 아이템 스케쥴
-	void scheduleEnemy		(float delta);				// 적 비행기 스케쥴
-	void update				(float delta);				// 업데이트
-	void updateLabel		();							// 라벨 업데이트
-	void resetisItem		(float delta);				// 아이템 리셋
-	void changeScene		();							// 화면 전환
-	void initSound();
+	void initBackGround();						// 게임 배경화면 초기화
+	void initLabel();							// 라벨 초기화
+	void scheduleEnMissile(float delta);		// 적비행기 미사일 스케쥴
+	void schedulePlMissile(float delta);		// 플레이어 미사일 스케쥴
+	void scheduleItem(float delta);				// 아이템 스케쥴
+	void scheduleEnemy(float delta);			// 적 비행기 스케쥴
+	void update(float delta);					// 업데이트
+	void updateLabel();							// 라벨 업데이트
+	void resetItem(float delta);				// 아이템 리셋
+	void resetEnemy(float delta);
+	void changeScene();							// 화면 전환
+	void initSound();							// 사운드 초기화
 };
 
 #endif // __GAME_SCENE_H__
