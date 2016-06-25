@@ -248,7 +248,7 @@ void GameScene::initBackGround()
 void GameScene::update(float delta)
 {
 	auto sprPlayer = (Sprite*)layerScene->getChildByTag(TAG_SPRITE_PLAYER);
-	Rect rectPlayer = sprPlayer->getBoundingBox();
+	Rect rectPlayer = Rect(sprPlayer->getPositionX() - 10, sprPlayer->getPositionY() - 10, 20, 20);
 
 	Rect rect1, rect2;
 
@@ -298,7 +298,7 @@ void GameScene::update(float delta)
 
 		for (Sprite* sprEnemy : Enemy.getSprEnemies() )
 		{
-			 rect2 = sprEnemy->getBoundingBox();
+			rect2 = Rect(sprEnemy->getPositionX() - 10, sprEnemy->getPositionY() - 10, 20, 20);
 
 			 if (rect2.intersectsRect(rect1))
 			{
@@ -337,13 +337,14 @@ void GameScene::update(float delta)
 	// 플레이어와 적비행기 충돌 체크
 	for (Sprite* sprEnemy : Enemy.getSprEnemies())
 	{
-		rect1 = sprEnemy->getBoundingBox();
-		rect1 = Rect(rect1.origin.x + 30, rect1.origin.y + 30, rect1.size.width - 30, rect1.size.height - 30);
-		rect2 = sprPlayer->getBoundingBox();
-		rect2 = Rect(rect2.origin.x + 30, rect2.origin.y + 30, rect2.size.width - 30, rect2.size.height - 30);
+	//	rect1 = sprEnemy->getBoundingBox();
+	//	rect1 = Rect(rect1.origin.x + 30, rect1.origin.y + 30, rect1.size.width - 30, rect1.size.height - 30);
+	//	rect2 = sprPlayer->getBoundingBox();
+	//	rect2 = Rect(rect2.origin.x + 30, rect2.origin.y + 30, rect2.size.width - 30, rect2.size.height - 30);
 
+		rect1 = Rect(sprEnemy->getPositionX() - 10, sprEnemy->getPositionY() - 10, 20, 20);
 
-		if (rect2.intersectsRect(rect1))
+		if (rectPlayer.intersectsRect(rect1))
 		{
 			Enemy.explosionEnemy(sprEnemy);
 			Enemy.resetEnemy(sprEnemy);

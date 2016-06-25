@@ -131,6 +131,8 @@ void MenuScene::menuCallback(Ref *sender)
 		case ID_MENU::HELP:
 		{
 			SimpleAudioEngine::getInstance()->playEffect("menu/button.mp3");
+			auto scene = TransitionFadeTR::create(1.0, HelpScene::createScene());
+			Director::getInstance()->replaceScene(scene);
 			break;
 		}
 			

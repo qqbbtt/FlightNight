@@ -9,10 +9,16 @@ USING_NS_CC;
 #define TAG_SPRITE_PLAYER		1000
 #define TAG_SPRITE_ENEMY		2000		// 2000 ~ 3000 사이가 적 비행기
 #define TAG_MOVE_ACTION			4000
+
 #define PADDING_SCREEN			10
+
 #define TAG_LABEL_SCORE			50
 #define TAG_LABEL_BUFFITEM		51
 #define	TAG_LABEL_DEBUFFITEM	52
+
+#define TAG_MENU				60			// 60~64 메뉴 화면 테그 
+#define TAG_HELP_NEXT			65			// 65~69 헬프 화면 테그 
+#define TAG_HELP_BACK			66
 
 //extern GameData Data;
 

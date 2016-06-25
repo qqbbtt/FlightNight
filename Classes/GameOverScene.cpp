@@ -33,7 +33,7 @@ bool GameOverScene::init()
 
 
 	// 게임 오버 글자
-	auto label = Label::createWithSystemFont("GAME OVER", "Thonburi", 50);		
+	auto label = Label::createWithTTF("GAME OVER", "fonts/Marker Felt.ttf", 60);
 	label->setPosition(Point(Director::getInstance()->getWinSize().width/2, Director::getInstance()->getWinSize().height/2));
 	this->addChild(label);
 
