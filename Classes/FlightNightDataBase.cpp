@@ -76,17 +76,17 @@ void FlightNightDataBase::insertdData(int year, int month, int day, int hour, in
 
 	sqlite3_close(pDB);
 
-	selectData();
+	orderDate();
 
 }
 
 /*------------------------------------------------------------------------------------
-| 함 수 명  : selectData()
+| 함 수 명  : orderScore()
 | 매개변수  : 
-| 리 턴 값  :
-| 설    명  : 입력된 데이터 확인 출력
+| 리 턴 값  : 
+| 설    명  : 데이터 점수 정렬
 |------------------------------------------------------------------------------------*/
-void FlightNightDataBase::selectData()
+void FlightNightDataBase::orderScore()
 {
 	sqlite3* pDB = NULL;
 	char *errMsg;
@@ -105,23 +105,222 @@ void FlightNightDataBase::selectData()
 	sqlite3_stmt* statement;
 	if (sqlite3_prepare_v2(pDB, sqlStr.c_str(), -1, &statement, NULL) == SQLITE_OK)
 	{
-		while (sqlite3_step(statement) == SQLITE_ROW)
-		{
-			int row1 = sqlite3_column_int(statement, 0);
-			int row2 = sqlite3_column_int(statement, 1);
-			int row3 = sqlite3_column_int(statement, 2);
-			int row4 = sqlite3_column_int(statement, 3);
-			int row5 = sqlite3_column_int(statement, 4);
-			int row6 = sqlite3_column_int(statement, 5);
-			int row7 = sqlite3_column_int(statement, 6);
-			int row8 = sqlite3_column_int(statement, 7);
+		int i = 0;
 
-			CCLOG("%d | %d | %d | %d | %d | %d | %d | %d | ", row1, row2, row3, row4, row5, row6, row7, row8);		
+		while (sqlite3_step(statement) == SQLITE_ROW && i < 5 )
+		{
+			arrFNDB[i][0] = sqlite3_column_int(statement, 0) % 2000;
+			arrFNDB[i][1] = sqlite3_column_int(statement, 1);
+			arrFNDB[i][2] = sqlite3_column_int(statement, 2);
+			arrFNDB[i][3] = sqlite3_column_int(statement, 3);
+			arrFNDB[i][4] = sqlite3_column_int(statement, 4);
+			arrFNDB[i][5] = sqlite3_column_int(statement, 5);
+			arrFNDB[i][6] = sqlite3_column_int(statement, 6);
+			arrFNDB[i][7] = sqlite3_column_int(statement, 7);
+
+//			CCLOG("%d | %d | %d | %d | %d | %d | %d | %d | ", arrFNDB[i][0], arrFNDB[i][1], arrFNDB[i][2], arrFNDB[i][3], arrFNDB[i][4], arrFNDB[i][5], arrFNDB[i][6], arrFNDB[i][7]);
+
+			i++;
 		}
 	}
 
 	sqlite3_finalize(statement);
 
 	sqlite3_close(pDB);
+
 }
 
+/*------------------------------------------------------------------------------------
+| 함 수 명  : orderBuf()
+| 매개변수  :
+| 리 턴 값  :
+| 설    명  : 데이터 버프 아이템 정렬
+|------------------------------------------------------------------------------------*/
+void FlightNightDataBase::orderBuf()
+{
+	sqlite3* pDB = NULL;
+	char *errMsg;
+	int result;
+
+	result = sqlite3_open(dbfileName.c_str(), &pDB);
+
+	if (result != SQLITE_OK)
+	{
+		CCLOG("selectData Open Error : Code:%d Msg : %s", result, errMsg);
+	}
+
+	string sqlStr;
+	sqlStr = "select year, month, day, hour, min, score, buffItem, deBuffItem from FlightNight order by buffItem DESC";
+
+	sqlite3_stmt* statement;
+	if (sqlite3_prepare_v2(pDB, sqlStr.c_str(), -1, &statement, NULL) == SQLITE_OK)
+	{
+		int i = 0;
+
+		while (sqlite3_step(statement) == SQLITE_ROW && i < 5)
+		{
+			arrFNDB[i][0] = sqlite3_column_int(statement, 0) % 2000;
+			arrFNDB[i][1] = sqlite3_column_int(statement, 1);
+			arrFNDB[i][2] = sqlite3_column_int(statement, 2);
+			arrFNDB[i][3] = sqlite3_column_int(statement, 3);
+			arrFNDB[i][4] = sqlite3_column_int(statement, 4);
+			arrFNDB[i][5] = sqlite3_column_int(statement, 5);
+			arrFNDB[i][6] = sqlite3_column_int(statement, 6);
+			arrFNDB[i][7] = sqlite3_column_int(statement, 7);
+
+//			CCLOG("%d | %d | %d | %d | %d | %d | %d | %d | ", arrFNDB[i][0], arrFNDB[i][1], arrFNDB[i][2], arrFNDB[i][3], arrFNDB[i][4], arrFNDB[i][5], arrFNDB[i][6], arrFNDB[i][7]);
+
+			i++;
+		}
+	}
+
+	sqlite3_finalize(statement);
+
+	sqlite3_close(pDB);
+
+}
+
+/*------------------------------------------------------------------------------------
+| 함 수 명  : orderDebuf()
+| 매개변수  :
+| 리 턴 값  :
+| 설    명  : 데이터 디버프 아이템 정렬
+|------------------------------------------------------------------------------------*/
+void FlightNightDataBase::orderDebuf()
+{
+	sqlite3* pDB = NULL;
+	char *errMsg;
+	int result;
+
+	result = sqlite3_open(dbfileName.c_str(), &pDB);
+
+	if (result != SQLITE_OK)
+	{
+		CCLOG("selectData Open Error : Code:%d Msg : %s", result, errMsg);
+	}
+
+	string sqlStr;
+	sqlStr = "select year, month, day, hour, min, score, buffItem, deBuffItem from FlightNight order by deBuffItem DESC";
+
+	sqlite3_stmt* statement;
+	if (sqlite3_prepare_v2(pDB, sqlStr.c_str(), -1, &statement, NULL) == SQLITE_OK)
+	{
+		int i = 0;
+
+		while (sqlite3_step(statement) == SQLITE_ROW && i < 5)
+		{
+			arrFNDB[i][0] = sqlite3_column_int(statement, 0) % 2000;
+			arrFNDB[i][1] = sqlite3_column_int(statement, 1);
+			arrFNDB[i][2] = sqlite3_column_int(statement, 2);
+			arrFNDB[i][3] = sqlite3_column_int(statement, 3);
+			arrFNDB[i][4] = sqlite3_column_int(statement, 4);
+			arrFNDB[i][5] = sqlite3_column_int(statement, 5);
+			arrFNDB[i][6] = sqlite3_column_int(statement, 6);
+			arrFNDB[i][7] = sqlite3_column_int(statement, 7);
+
+//			CCLOG("%d | %d | %d | %d | %d | %d | %d | %d | ", arrFNDB[i][0], arrFNDB[i][1], arrFNDB[i][2], arrFNDB[i][3], arrFNDB[i][4], arrFNDB[i][5], arrFNDB[i][6], arrFNDB[i][7]);
+
+			i++;
+		}
+	}
+
+	sqlite3_finalize(statement);
+
+	sqlite3_close(pDB);
+
+}
+
+/*------------------------------------------------------------------------------------
+| 함 수 명  : orderDate()
+| 매개변수  :
+| 리 턴 값  :
+| 설    명  : 데이터 날짜 정렬
+|------------------------------------------------------------------------------------*/
+void FlightNightDataBase::orderDate()
+{
+	sqlite3* pDB = NULL;
+	char *errMsg;
+	int result;
+
+	result = sqlite3_open(dbfileName.c_str(), &pDB);
+
+	if (result != SQLITE_OK)
+	{
+		CCLOG("selectData Open Error : Code:%d Msg : %s", result, errMsg);
+	}
+
+	string sqlStr;
+	sqlStr = "select year, month, day, hour, min, score, buffItem, deBuffItem from FlightNight order by year DESC, month DESC, day DESC, hour DESC, min DESC";
+
+	sqlite3_stmt* statement;
+	if (sqlite3_prepare_v2(pDB, sqlStr.c_str(), -1, &statement, NULL) == SQLITE_OK)
+	{
+		int i = 0;
+
+		while (sqlite3_step(statement) == SQLITE_ROW && i < 5)
+		{
+			arrFNDB[i][0] = sqlite3_column_int(statement, 0) % 2000;
+			arrFNDB[i][1] = sqlite3_column_int(statement, 1);
+			arrFNDB[i][2] = sqlite3_column_int(statement, 2);
+			arrFNDB[i][3] = sqlite3_column_int(statement, 3);
+			arrFNDB[i][4] = sqlite3_column_int(statement, 4);
+			arrFNDB[i][5] = sqlite3_column_int(statement, 5);
+			arrFNDB[i][6] = sqlite3_column_int(statement, 6);
+			arrFNDB[i][7] = sqlite3_column_int(statement, 7);
+
+//			CCLOG("%d | %d | %d | %d | %d | %d | %d | %d | ", arrFNDB[i][0], arrFNDB[i][1], arrFNDB[i][2], arrFNDB[i][3], arrFNDB[i][4], arrFNDB[i][5], arrFNDB[i][6], arrFNDB[i][7]);
+
+			i++;
+		}
+	}
+
+	sqlite3_finalize(statement);
+
+	sqlite3_close(pDB);
+
+}
+
+/*------------------------------------------------------------------------------------
+| 함 수 명  : deleteDatabase()
+| 매개변수  :
+| 리 턴 값  :
+| 설    명  : 모든 데이터 삭제
+|------------------------------------------------------------------------------------*/
+void FlightNightDataBase::deleteDatabase()
+{
+	sqlite3* pDB = NULL;
+	char *errMsg;
+	int result;
+
+	result = sqlite3_open(dbfileName.c_str(), &pDB);
+
+	if (result != SQLITE_OK)
+	{
+		CCLOG("deleteDatabase Open Error : Code:%d Msg : %s", result, errMsg);
+	}
+
+	string sqlStr;
+	sqlStr = "delete from FlightNight where year > 2000";
+	result = sqlite3_exec(pDB, sqlStr.c_str(), NULL, NULL, &errMsg);
+
+	if (result != SQLITE_OK)
+	{
+		CCLOG("deleteDatabase Open Error2 : Code:%d Msg : %s", result, errMsg);
+	}
+
+	sqlite3_close(pDB);
+
+	arrFNDB[5][8] = { 0, };
+
+}
+
+/*------------------------------------------------------------------------------------
+| 함 수 명  : (*FlightNightDataBase::getFNDB())[8]
+| 매개변수  :
+| 리 턴 값  : int* = 배열 포인터
+| 설    명  : 배열 리턴
+|------------------------------------------------------------------------------------*/
+int (*FlightNightDataBase::getFNDB())[8]
+{
+	return arrFNDB;
+}

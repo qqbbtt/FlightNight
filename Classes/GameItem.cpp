@@ -80,9 +80,17 @@ void GameItem::setItem(float delta)
 
 
 	// 아래로 떨어지는 액션 실행
-	auto action = Sequence::create(MoveBy::create(fSpeed, Point(0, -(Director::getInstance()->getWinSize().height))),
-		CallFuncN::create(CC_CALLBACK_1(GameItem::resetItem, this)), NULL);
-	sprItem->runAction(action);
+//	auto action1 = Sequence::create(MoveBy::create(fSpeed, Point(0, -(Director::getInstance()->getWinSize().height))),
+//		CallFuncN::create(CC_CALLBACK_1(GameItem::resetItem, this)), NULL);
+
+	// 깜빡이면서 아래로 떨어지는 아이템 액션
+	auto action1 = MoveBy::create(fSpeed, Point(0, -(Director::getInstance()->getWinSize().height)));
+	auto action2 = Blink::create(3.0, 15);
+	auto action3 = Spawn::create(action1, action2, NULL);
+	auto action4 = CallFuncN::create(CC_CALLBACK_1(GameItem::resetItem, this));
+	auto action5 = Sequence::create(action3, action4, NULL);
+
+	sprItem->runAction(action5);
 
 }
 

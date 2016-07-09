@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 #include "MenuScene.h"
+#include "DataScene.h"
 
 #pragma execution_character_set("utf-8")
 
@@ -18,12 +19,10 @@ using namespace std;
 class HelpScene : public cocos2d::Layer
 {
 private:
-
 	float				SizeW;					// 화면 가로
 	float				SizeH;					// 화면 세로
 
 	cocos2d::Scene* gamese;
-
 
 
 public:

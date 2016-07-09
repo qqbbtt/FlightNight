@@ -88,7 +88,7 @@ void HelpScene::initMenu()
 {
 	// 메뉴 아이템 셋팅
 	auto menu_Next = MenuItemImage::create("menu/Next_0.png", "menu/Next_1.png", CC_CALLBACK_1(HelpScene::menuCallback, this));
-	menu_Next->setTag(TAG_HELP_NEXT);
+	menu_Next->setTag(TAG_HELP_MENU_NEXT);
 	menu_Next->setScale(0.1f);
 	
 	auto menu1 = Menu::create(menu_Next, NULL);
@@ -97,7 +97,7 @@ void HelpScene::initMenu()
 	this->addChild(menu1);
 
 	auto menu_Back = MenuItemImage::create("menu/Back_0.png", "menu/Back_1.png", CC_CALLBACK_1(HelpScene::menuCallback, this));
-	menu_Back->setTag(TAG_HELP_BACK);
+	menu_Back->setTag(TAG_HELP_MENU_BACK);
 	menu_Back->setScale(0.1f);
 
 	auto menu2 = Menu::create(menu_Back, NULL);
@@ -121,15 +121,16 @@ void HelpScene::menuCallback(Ref *sender)
 	switch (menu->getTag())
 	{
 		// Next
-		case TAG_HELP_NEXT:
+		case TAG_HELP_MENU_NEXT:
 		{
 			SimpleAudioEngine::getInstance()->playEffect("menu/button.mp3");
-		
+			auto scene = TransitionFadeTR::create(1.0, DataScene::createScene());
+			Director::getInstance()->replaceScene(scene);
 			break;
 		}
 
 		// Back
-		case TAG_HELP_BACK:
+		case TAG_HELP_MENU_BACK:
 		{
 			SimpleAudioEngine::getInstance()->playEffect("menu/button.mp3");
 			auto scene = TransitionFadeTR::create(1.0, MenuScene::createScene());

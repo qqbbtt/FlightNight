@@ -1,4 +1,5 @@
 #include "GameMissile.h"
+#include "MenuScene.h"
 
 USING_NS_CC;
 
@@ -80,7 +81,7 @@ void GameMissile::setMissile(float delta, int type)
 		CallFuncN::create(CC_CALLBACK_1(GameMissile::resetMissile, this)), NULL);
 	sprMissile->runAction(action);
 
-	SimpleAudioEngine::getInstance()->playEffect("game/enemy_missile.wav");
+	if (iEffect == true) SimpleAudioEngine::getInstance()->playEffect("game/enemy_missile.wav");
 }
 
 /*------------------------------------------------------------------------------------
@@ -121,7 +122,7 @@ void GameMissile::setMissile(float delta, Vector<Sprite*> enemy, int type)
 			CallFuncN::create(CC_CALLBACK_1(GameMissile::resetMissile, this)), NULL);
 		sprMissile->runAction(action);
 
-		SimpleAudioEngine::getInstance()->playEffect("game/enemy_missile.wav");
+		if (iEffect == true) SimpleAudioEngine::getInstance()->playEffect("game/enemy_missile.wav");
 
 	}
 

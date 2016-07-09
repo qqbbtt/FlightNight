@@ -92,9 +92,12 @@ void GameScene::initSound()
 {
 //	if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 //	{
+	if (SimpleAudioEngine::getInstance()->isBackgroundMusicPlaying() == true)
+	{
 		SimpleAudioEngine::getInstance()->preloadBackgroundMusic("game/bgm.mp3");
 		SimpleAudioEngine::getInstance()->playBackgroundMusic("game/bgm.mp3", true);
-
+	}
+		
 		SimpleAudioEngine::getInstance()->preloadEffect("game/enemy_missile.wav");
 		SimpleAudioEngine::getInstance()->preloadEffect("game/explosion.wav");
 		SimpleAudioEngine::getInstance()->preloadEffect("game/player_missile.wav");
@@ -115,17 +118,17 @@ void GameScene::initLabel()
 
 	labelcurScore->setAnchorPoint(Point(1, 1));
 	labelcurScore->setPosition(Point(SizeW - 10, SizeH - 10));
-	labelcurScore->setTag(TAG_LABEL_SCORE);
+	labelcurScore->setTag(TAG_GAME_LABEL_SCORE);
 	this->addChild(labelcurScore);
 
 	labelbuffItem->setAnchorPoint(Point(0, 0));
 	labelbuffItem->setPosition(Point(10, 40 ));
-	labelbuffItem->setTag(TAG_LABEL_BUFFITEM);
+	labelbuffItem->setTag(TAG_GAME_LABEL_BUFFITEM);
 	this->addChild(labelbuffItem);
 
 	labeldebuffItem->setAnchorPoint(Point(0, 0));
 	labeldebuffItem->setPosition(Point(10, 10));
-	labeldebuffItem->setTag(TAG_LABEL_DEBUFFITEM);
+	labeldebuffItem->setTag(TAG_GAME_LABEL_DEBUFFITEM);
 	this->addChild(labeldebuffItem);
 }
 
@@ -264,8 +267,10 @@ void GameScene::update(float delta)
 			this->unschedule(schedule_selector(GameScene::schedulePlMissile));
 			this->schedule(schedule_selector(GameScene::schedulePlMissile), speedPl);
 			this->scheduleOnce(schedule_selector(GameScene::resetItem), 5.0);
-			gmData.setBufItem(1);			// 버프아이템 습득시
-			SimpleAudioEngine::getInstance()->playEffect("game/item.mp3");
+			gmData.setBufItem(1);			// 버프 아이템 습득 시
+			gmData.setScore(10);			// 버프 아이템 습득 시 점수 +10점
+
+			if (iEffect == true) SimpleAudioEngine::getInstance()->playEffect("game/item.mp3");
 			
 			break;
 		}		
@@ -283,8 +288,10 @@ void GameScene::update(float delta)
 			this->unschedule(schedule_selector(GameScene::scheduleEnMissile));
 			this->schedule(schedule_selector(GameScene::scheduleEnMissile), speedEn);
 			this->scheduleOnce(schedule_selector(GameScene::resetItem), 5.0);
-			gmData.setDebufItem(1);			// 디버프 아이템 습득시
-			SimpleAudioEngine::getInstance()->playEffect("game/item.mp3");
+			gmData.setDebufItem(1);			// 디버프 아이템 습득 시
+			gmData.setScore(50);			// 디버프 아이템 습득 시 점수 +50점
+
+			if (iEffect == true) SimpleAudioEngine::getInstance()->playEffect("game/item.mp3");
 			
 
 			break;
@@ -298,14 +305,17 @@ void GameScene::update(float delta)
 
 		for (Sprite* sprEnemy : Enemy.getSprEnemies() )
 		{
-			rect2 = Rect(sprEnemy->getPositionX() - 10, sprEnemy->getPositionY() - 10, 20, 20);
+		//	rect2 = Rect(sprEnemy->getPositionX() - 10, sprEnemy->getPositionY() - 10, 20, 20);
+			rect2 = sprEnemy->getBoundingBox();
 
 			 if (rect2.intersectsRect(rect1))
 			{
 				 Enemy.explosionEnemy(sprEnemy);
 				 PlayerMissile.resetMissile(missile);
 				 Enemy.resetEnemy(sprEnemy);
-				 SimpleAudioEngine::getInstance()->playEffect("game/boom.wav");
+
+				 if (iEffect == true) SimpleAudioEngine::getInstance()->playEffect("game/boom.wav");
+
 				 gmData.setScore(10);
 
 				 if (gmData.getScore() % 50 == 0 && gmData.getScore() != 0 && gmData.getScore() / 50 < 7)
@@ -365,13 +375,13 @@ void GameScene::update(float delta)
 |------------------------------------------------------------------------------------*/
 void GameScene::updateLabel()
 {
-	auto labelScore = (Label*)this->getChildByTag(TAG_LABEL_SCORE);
+	auto labelScore = (Label*)this->getChildByTag(TAG_GAME_LABEL_SCORE);
 	labelScore->setString(StringUtils::format("SCORE : %d", gmData.getScore()));
 
-	auto labelBuffItem = (Label*)this->getChildByTag(TAG_LABEL_BUFFITEM);
+	auto labelBuffItem = (Label*)this->getChildByTag(TAG_GAME_LABEL_BUFFITEM);
 	labelBuffItem->setString(StringUtils::format("BUFFITEM : %d", gmData.getBufItem()));
 
-	auto labelDeBuffItem = (Label*)this->getChildByTag(TAG_LABEL_DEBUFFITEM);
+	auto labelDeBuffItem = (Label*)this->getChildByTag(TAG_GAME_LABEL_DEBUFFITEM);
 	labelDeBuffItem->setString(StringUtils::format("DEBUFFITEM : %d", gmData.getDebufItem()));
 }
 
